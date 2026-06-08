@@ -1,0 +1,2256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PlantStats AI Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM — Botanical Science aesthetic:
+   deep teal greens, warm cream, soft sage,
+   with lavender AI accents. Organic curves,
+   generous whitespace, typographic hierarchy.
+═══════════════════════════════════════════════ */
+:root{
+  --teal:       #0d6e6e;
+  --teal-dk:    #094f4f;
+  --teal-lt:    #e0f4f4;
+  --teal-mid:   #1a9090;
+  --green:      #2d7d46;
+  --green-lt:   #e8f5ed;
+  --green-mid:  #4aab6a;
+  --sage:       #7fb896;
+  --sage-lt:    #f0f7f3;
+  --purple:     #6941c6;
+  --purple-lt:  #f4f0fe;
+  --purple-mid: #8b5cf6;
+  --amber:      #d97706;
+  --amber-lt:   #fffbeb;
+  --red:        #dc2626;
+  --red-lt:     #fef2f2;
+  --cream:      #fafdf9;
+  --white:      #ffffff;
+  --gray-50:    #f9fafb;
+  --gray-100:   #f3f4f6;
+  --gray-200:   #e5e7eb;
+  --gray-400:   #9ca3af;
+  --gray-600:   #4b5563;
+  --gray-800:   #1f2937;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+  --radius:     14px;
+  --radius-lg:  20px;
+  --shadow-sm:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:     0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.05);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,.10), 0 4px 12px rgba(0,0,0,.06);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font-body);background:var(--cream);color:var(--gray-800);line-height:1.6;min-height:100vh}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--gray-100)}
+::-webkit-scrollbar-thumb{background:var(--sage);border-radius:99px}
+
+/* ── Selection ── */
+::selection{background:var(--teal-lt);color:var(--teal-dk)}
+
+/* ════════════════════════════════════════════
+   NAV
+════════════════════════════════════════════ */
+#top-nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,253,249,.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--gray-200);
+  padding:0 1rem;
+}
+.nav-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;gap:.5rem;
+  height:58px;overflow-x:auto;
+  scrollbar-width:none;
+}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-logo{
+  font-family:var(--font-display);font-size:1.05rem;font-weight:700;
+  color:var(--teal-dk);white-space:nowrap;margin-right:.75rem;
+  text-decoration:none;letter-spacing:-.01em;
+}
+.nav-logo span{color:var(--green-mid)}
+.nav-btn{
+  border:none;background:transparent;cursor:pointer;
+  font-family:var(--font-body);font-size:.8rem;font-weight:500;
+  color:var(--gray-600);padding:.35rem .7rem;border-radius:99px;
+  white-space:nowrap;transition:all .18s;
+}
+.nav-btn:hover{background:var(--teal-lt);color:var(--teal)}
+.nav-btn.active{background:var(--teal);color:#fff}
+
+/* ════════════════════════════════════════════
+   SECTIONS (show/hide)
+════════════════════════════════════════════ */
+.section{display:none;animation:fadeUp .35s ease both}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ════════════════════════════════════════════
+   LAYOUT HELPERS
+════════════════════════════════════════════ */
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.section-hero{
+  background:linear-gradient(135deg,var(--teal-dk) 0%,var(--teal-mid) 60%,var(--green) 100%);
+  padding:2.5rem 1.5rem 2rem;border-radius:var(--radius-lg);
+  color:#fff;margin-bottom:2rem;position:relative;overflow:hidden;
+}
+.section-hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='28'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity:.6;
+}
+.section-hero *{position:relative}
+.section-hero h2{font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:.4rem}
+.section-hero p{opacity:.88;font-size:.95rem}
+
+.card{
+  background:var(--white);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.25rem;
+  border:1px solid var(--gray-100);
+}
+.card-teal{border-left:4px solid var(--teal)}
+.card-green{border-left:4px solid var(--green)}
+.card-purple{border-left:4px solid var(--purple)}
+.card-amber{border-left:4px solid var(--amber)}
+
+h2.title{font-family:var(--font-display);font-size:1.5rem;font-weight:700;color:var(--teal-dk);margin-bottom:.25rem}
+h3.subtitle{font-size:1rem;font-weight:600;color:var(--gray-600);margin-bottom:1rem}
+h3.card-title{font-size:1rem;font-weight:600;color:var(--teal-dk);margin-bottom:.6rem}
+
+p{margin-bottom:.75rem;color:var(--gray-600);font-size:.95rem}
+p:last-child{margin-bottom:0}
+ul,ol{padding-left:1.4rem;color:var(--gray-600);font-size:.95rem}
+li{margin-bottom:.3rem}
+strong{color:var(--gray-800)}
+
+/* Badges */
+.badge{
+  display:inline-block;padding:.2rem .65rem;border-radius:99px;
+  font-size:.72rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+}
+.badge-teal{background:var(--teal-lt);color:var(--teal-dk)}
+.badge-green{background:var(--green-lt);color:var(--green)}
+.badge-purple{background:var(--purple-lt);color:var(--purple)}
+.badge-amber{background:var(--amber-lt);color:var(--amber)}
+.badge-red{background:var(--red-lt);color:var(--red)}
+
+/* Callouts */
+.callout{
+  border-radius:var(--radius);padding:1rem 1.1rem;
+  margin:.75rem 0;font-size:.9rem;display:flex;gap:.7rem;align-items:flex-start;
+}
+.callout-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.callout-note{background:var(--teal-lt);border:1px solid #b2e0e0}
+.callout-warn{background:var(--amber-lt);border:1px solid #fcd34d}
+.callout-tip{background:var(--green-lt);border:1px solid #86efac}
+.callout-ai{background:var(--purple-lt);border:1px solid #c4b5fd}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:.4rem;
+  border:none;cursor:pointer;font-family:var(--font-body);
+  font-weight:600;border-radius:99px;transition:all .18s;text-decoration:none;
+}
+.btn-primary{background:var(--teal);color:#fff;padding:.65rem 1.4rem;font-size:.9rem}
+.btn-primary:hover{background:var(--teal-dk);transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn-secondary{background:var(--white);color:var(--teal);padding:.6rem 1.3rem;font-size:.9rem;border:2px solid var(--teal)}
+.btn-secondary:hover{background:var(--teal-lt)}
+.btn-sm{padding:.4rem .85rem;font-size:.78rem}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#236237;transform:translateY(-1px)}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-purple:hover{background:#5b32b0;transform:translateY(-1px)}
+.btn-copy{background:var(--gray-100);color:var(--gray-800);border:1px solid var(--gray-200);
+  padding:.3rem .75rem;border-radius:6px;font-size:.75rem;font-weight:500;cursor:pointer;
+  transition:all .15s;font-family:var(--font-body);}
+.btn-copy:hover{background:var(--teal-lt);color:var(--teal-dk)}
+.btn-copy.copied{background:#dcfce7;color:#166534}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.85rem}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;margin:.75rem 0;border-radius:var(--radius);box-shadow:var(--shadow-sm)}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+thead tr{background:var(--teal);color:#fff}
+th{padding:.7rem .9rem;text-align:left;font-weight:600;font-size:.8rem;letter-spacing:.03em}
+td{padding:.65rem .9rem;border-bottom:1px solid var(--gray-100)}
+tbody tr:nth-child(even){background:var(--gray-50)}
+tbody tr:hover{background:var(--teal-lt);transition:background .15s}
+
+/* Code blocks */
+.code-wrap{position:relative;margin:.75rem 0}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#1e2a1e;color:#86efac;
+  padding:.5rem .9rem;border-radius:var(--radius) var(--radius) 0 0;
+  font-size:.75rem;font-weight:500;font-family:var(--font-mono);
+}
+pre{
+  background:#0f1f0f;color:#d4ffd4;
+  padding:1.1rem;border-radius:0 0 var(--radius) var(--radius);
+  overflow-x:auto;font-family:var(--font-mono);
+  font-size:.8rem;line-height:1.7;margin:0;
+  white-space:pre;
+}
+.code-comment{color:#6a9f6a}
+.code-kw{color:#86efac}
+.code-str{color:#fde68a}
+.code-fn{color:#93c5fd}
+
+/* ════════════════════════════════════════════
+   SECTION 1 — WELCOME
+════════════════════════════════════════════ */
+#sec-welcome .hero-main{
+  background:linear-gradient(135deg,#0a4040 0%,#0d6e6e 45%,#1a7a4a 100%);
+  border-radius:var(--radius-lg);padding:3rem 2rem 2.5rem;
+  color:#fff;text-align:center;margin-bottom:2rem;
+  position:relative;overflow:hidden;
+}
+#sec-welcome .hero-main::before{
+  content:'🌿';position:absolute;top:-20px;right:30px;
+  font-size:8rem;opacity:.08;line-height:1;
+}
+#sec-welcome .hero-title{
+  font-family:var(--font-display);font-size:2.4rem;font-weight:700;
+  margin-bottom:.5rem;line-height:1.1;
+}
+#sec-welcome .hero-title span{color:#86efac}
+#sec-welcome .hero-sub{font-size:1rem;opacity:.85;margin-bottom:1.5rem}
+#sec-welcome .hero-message{
+  background:rgba(255,255,255,.12);backdrop-filter:blur(8px);
+  border-radius:var(--radius);padding:1rem 1.3rem;
+  font-size:.95rem;margin-bottom:1.75rem;border:1px solid rgba(255,255,255,.2);
+}
+.hero-btns{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.info-strip{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.75rem;
+  margin-top:1.25rem;
+}
+.info-chip{
+  background:var(--white);border-radius:var(--radius);padding:.85rem 1rem;
+  border:1px solid var(--gray-200);text-align:center;
+}
+.info-chip .chip-icon{font-size:1.4rem;margin-bottom:.3rem}
+.info-chip .chip-label{font-size:.7rem;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;display:block}
+.info-chip .chip-val{font-size:.88rem;font-weight:600;color:var(--gray-800)}
+
+/* ════════════════════════════════════════════
+   SECTION 2 — FLASHCARDS
+════════════════════════════════════════════ */
+.flashcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin-bottom:1.5rem}
+.flashcard{
+  perspective:900px;height:160px;cursor:pointer;
+}
+.flashcard-inner{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);
+  border-radius:var(--radius);
+}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{
+  position:absolute;inset:0;border-radius:var(--radius);
+  backface-visibility:hidden;padding:1.1rem;
+  display:flex;flex-direction:column;justify-content:center;
+  box-shadow:var(--shadow);
+}
+.fc-front{background:var(--teal);color:#fff;text-align:center}
+.fc-front .fc-term{font-family:var(--font-display);font-size:1.15rem;font-weight:700;margin-bottom:.3rem}
+.fc-front .fc-hint{font-size:.75rem;opacity:.7}
+.fc-back{background:var(--white);transform:rotateY(180deg);border:2px solid var(--teal-lt)}
+.fc-back .fc-def{font-size:.85rem;color:var(--gray-700);margin-bottom:.5rem;font-weight:500}
+.fc-back .fc-ex{font-size:.8rem;color:var(--teal);background:var(--teal-lt);
+  padding:.3rem .6rem;border-radius:6px;display:inline-block}
+
+.pval-card{
+  background:linear-gradient(135deg,var(--teal-dk),var(--teal-mid));
+  color:#fff;border-radius:var(--radius-lg);padding:1.5rem;text-align:center;
+  margin-top:1rem;
+}
+.pval-card h3{font-family:var(--font-display);font-size:1.2rem;margin-bottom:1rem}
+.pval-rows{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
+.pval-row{
+  background:rgba(255,255,255,.12);border-radius:var(--radius);
+  padding:.85rem 1.25rem;flex:1;min-width:200px;text-align:center;
+  border:1px solid rgba(255,255,255,.2);
+}
+.pval-row .pval-rule{font-size:1rem;font-weight:700;margin-bottom:.3rem;font-family:var(--font-mono)}
+.pval-row .pval-desc{font-size:.82rem;opacity:.85}
+
+/* ════════════════════════════════════════════
+   SECTION 4 — TEST FINDER
+════════════════════════════════════════════ */
+#finder-wrap{
+  background:var(--white);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);overflow:hidden;
+}
+.finder-step{display:none;padding:2rem}
+.finder-step.active{display:block;animation:fadeUp .3s ease both}
+.finder-q{font-family:var(--font-display);font-size:1.25rem;font-weight:700;color:var(--teal-dk);margin-bottom:.3rem}
+.finder-hint{font-size:.88rem;color:var(--gray-400);margin-bottom:1.25rem}
+.finder-opts{display:grid;gap:.75rem}
+.finder-opt{
+  border:2px solid var(--gray-200);border-radius:var(--radius);
+  padding:1rem 1.25rem;cursor:pointer;background:var(--white);
+  text-align:left;font-family:var(--font-body);font-size:.92rem;
+  font-weight:500;color:var(--gray-800);transition:all .18s;
+  display:flex;align-items:center;gap:.75rem;
+}
+.finder-opt:hover{border-color:var(--teal);background:var(--teal-lt);transform:translateX(4px)}
+.opt-icon{font-size:1.4rem;flex-shrink:0}
+.opt-text b{display:block;font-size:.95rem}
+.opt-text span{font-size:.8rem;color:var(--gray-400)}
+
+.finder-result{display:none;padding:2rem}
+.finder-result.active{display:block;animation:fadeUp .3s ease both}
+.result-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--teal);color:#fff;border-radius:99px;
+  padding:.5rem 1.1rem;font-weight:700;font-size:.95rem;margin-bottom:1.25rem;
+}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1rem 0}
+@media(max-width:600px){.result-grid{grid-template-columns:1fr}}
+.result-item{
+  background:var(--gray-50);border-radius:var(--radius);
+  padding:.75rem .9rem;border:1px solid var(--gray-200);
+}
+.result-item label{font-size:.72rem;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.25rem}
+.result-item span{font-size:.88rem;color:var(--gray-800);font-weight:500}
+.finder-progress{
+  display:flex;align-items:center;gap:.5rem;
+  padding:1rem 2rem;background:var(--gray-50);border-bottom:1px solid var(--gray-200);
+}
+.prog-dot{width:10px;height:10px;border-radius:50%;background:var(--gray-200);transition:background .3s}
+.prog-dot.done{background:var(--green)}
+.prog-dot.active{background:var(--teal)}
+
+/* ════════════════════════════════════════════
+   SECTION 5 — TEST CARDS
+════════════════════════════════════════════ */
+.test-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.test-tab{
+  border:2px solid var(--gray-200);border-radius:99px;
+  padding:.4rem 1rem;cursor:pointer;font-size:.83rem;font-weight:600;
+  background:var(--white);color:var(--gray-600);transition:all .18s;
+}
+.test-tab:hover{border-color:var(--teal);color:var(--teal)}
+.test-tab.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.test-panel{display:none}
+.test-panel.active{display:block;animation:fadeUp .3s ease both}
+
+.test-header{
+  background:var(--teal);color:#fff;border-radius:var(--radius);
+  padding:1.25rem 1.5rem;margin-bottom:1rem;
+}
+.test-header h3{font-family:var(--font-display);font-size:1.2rem;margin-bottom:.25rem}
+.test-header p{font-size:.88rem;opacity:.85;margin:0}
+
+.when-use{
+  background:var(--green-lt);border:1px solid #86efac;border-radius:var(--radius);
+  padding:1rem 1.1rem;margin:.75rem 0;
+}
+.when-use strong{color:var(--green);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.35rem}
+.when-use p{color:var(--gray-700);font-size:.9rem;margin:0}
+
+.r-table{width:100%;font-size:.82rem}
+.r-table th{background:var(--purple);color:#fff}
+.r-table td{padding:.5rem .7rem}
+.r-table tr:nth-child(even) td{background:var(--purple-lt)}
+
+.template-box{
+  background:var(--amber-lt);border:1px solid #fcd34d;border-radius:var(--radius);
+  padding:1rem 1.1rem;margin:.75rem 0;position:relative;
+}
+.template-box .template-label{
+  font-size:.72rem;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.05em;
+  display:block;margin-bottom:.4rem;
+}
+.template-box p{font-size:.88rem;color:var(--gray-700);font-style:italic;margin-bottom:.5rem}
+
+/* ════════════════════════════════════════════
+   SECTION 6 — p-VALUE INTERPRETER
+════════════════════════════════════════════ */
+.pval-interpreter{
+  background:var(--white);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.pval-input-zone{
+  padding:2rem;background:var(--gray-50);border-bottom:1px solid var(--gray-200);
+  text-align:center;
+}
+.pval-input-zone label{
+  display:block;font-size:.88rem;font-weight:600;color:var(--gray-600);margin-bottom:.75rem;
+}
+.pval-input{
+  border:2px solid var(--gray-200);border-radius:var(--radius);
+  padding:.75rem 1rem;font-size:1.1rem;font-family:var(--font-mono);
+  text-align:center;width:200px;outline:none;transition:border .2s;
+  background:var(--white);
+}
+.pval-input:focus{border-color:var(--teal)}
+.pval-result-zone{padding:2rem;min-height:200px;transition:background .3s}
+.pval-sig{
+  text-align:center;padding:1.5rem;border-radius:var(--radius);
+  animation:fadeUp .3s ease both;
+}
+.pval-sig.significant{background:var(--green-lt);border:2px solid #86efac}
+.pval-sig.not-significant{background:var(--red-lt);border:2px solid #fca5a5}
+.pval-sig .pval-verdict{font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:.5rem}
+.pval-sig.significant .pval-verdict{color:var(--green)}
+.pval-sig.not-significant .pval-verdict{color:var(--red)}
+.pval-sig .pval-detail{font-size:.9rem;color:var(--gray-600);margin:.3rem 0}
+.pval-sig .pval-null{
+  display:inline-block;background:var(--white);border-radius:99px;
+  padding:.3rem .9rem;font-size:.82rem;font-weight:600;margin-top:.5rem;
+}
+.pval-sig.significant .pval-null{color:var(--green);border:1px solid #86efac}
+.pval-sig.not-significant .pval-null{color:var(--red);border:1px solid #fca5a5}
+.pval-warn-box{
+  margin-top:1rem;padding:.85rem 1rem;
+  background:var(--amber-lt);border-radius:var(--radius);border:1px solid #fcd34d;
+  font-size:.83rem;color:var(--gray-700);text-align:center;
+}
+
+/* ════════════════════════════════════════════
+   SECTION 7 — COLAB COMPANION
+════════════════════════════════════════════ */
+.step-flow{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.5rem}
+.step-item{
+  display:flex;align-items:flex-start;gap:1rem;
+  background:var(--white);border:1px solid var(--gray-200);
+  border-radius:var(--radius);padding:1rem 1.1rem;
+}
+.step-num{
+  background:var(--teal);color:#fff;
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;font-weight:700;flex-shrink:0;margin-top:.05rem;
+}
+.step-text{flex:1}
+.step-text b{display:block;font-size:.92rem;color:var(--gray-800);margin-bottom:.2rem}
+.step-text span{font-size:.83rem;color:var(--gray-500)}
+.arrow-down{text-align:center;color:var(--gray-300);font-size:1.3rem;line-height:1;margin:-3px 0}
+
+.cell-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.cell-tab{
+  border:1px solid var(--gray-200);border-radius:6px;
+  padding:.3rem .75rem;font-size:.75rem;font-weight:600;
+  cursor:pointer;background:var(--white);color:var(--gray-600);transition:all .15s;
+}
+.cell-tab:hover{background:var(--teal-lt);color:var(--teal-dk)}
+.cell-tab.active{background:var(--teal-dk);color:#fff;border-color:var(--teal-dk)}
+.cell-panel{display:none}
+.cell-panel.active{display:block;animation:fadeUp .25s ease both}
+
+/* ════════════════════════════════════════════
+   SECTION 8 — GEMINI PROMPTS
+════════════════════════════════════════════ */
+.prompt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.prompt-card{
+  background:var(--white);border:1px solid var(--gray-200);
+  border-radius:var(--radius);overflow:hidden;transition:box-shadow .2s;
+}
+.prompt-card:hover{box-shadow:var(--shadow)}
+.prompt-card-head{
+  background:var(--purple);color:#fff;padding:.75rem 1rem;
+  font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:.5rem;
+}
+.prompt-card-body{padding:1rem}
+.prompt-text{
+  background:var(--purple-lt);border:1px solid #ddd6fe;border-radius:8px;
+  padding:.75rem;font-size:.82rem;color:var(--gray-700);font-style:italic;
+  line-height:1.5;margin-bottom:.75rem;
+}
+.fillable{
+  background:var(--amber-lt);border:1px dashed var(--amber);
+  border-radius:4px;padding:.15rem .35rem;font-style:normal;
+  font-weight:600;color:var(--amber);
+}
+
+/* ════════════════════════════════════════════
+   SECTION 9 — RESULT SENTENCE BUILDER
+════════════════════════════════════════════ */
+.builder-form{
+  background:var(--white);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);padding:1.75rem;
+}
+.form-group{margin-bottom:1.1rem}
+.form-group label{
+  display:block;font-size:.83rem;font-weight:600;
+  color:var(--gray-700);margin-bottom:.4rem;
+}
+.form-control{
+  width:100%;border:2px solid var(--gray-200);border-radius:var(--radius);
+  padding:.6rem .85rem;font-family:var(--font-body);font-size:.9rem;
+  color:var(--gray-800);outline:none;transition:border .2s;background:var(--white);
+}
+.form-control:focus{border-color:var(--teal)}
+select.form-control{cursor:pointer}
+.builder-output{
+  background:var(--teal-lt);border:2px solid var(--teal);border-radius:var(--radius);
+  padding:1.25rem;margin-top:1.25rem;display:none;
+}
+.builder-output.show{display:block;animation:fadeUp .3s ease both}
+.builder-output .out-label{
+  font-size:.72rem;font-weight:700;color:var(--teal-dk);
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;
+}
+#generated-sentence{
+  font-size:.92rem;color:var(--gray-800);line-height:1.65;
+  font-style:italic;padding:.75rem;background:var(--white);
+  border-radius:8px;margin-bottom:.75rem;
+}
+
+/* ════════════════════════════════════════════
+   SECTION 10 — RESPONSIBLE AI
+════════════════════════════════════════════ */
+.ai-split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+@media(max-width:600px){.ai-split{grid-template-columns:1fr}}
+.ai-col{border-radius:var(--radius);overflow:hidden}
+.ai-col-head{padding:.85rem 1rem;font-weight:700;font-size:.9rem}
+.ai-col.can .ai-col-head{background:var(--green);color:#fff}
+.ai-col.cannot .ai-col-head{background:var(--red);color:#fff}
+.ai-col-body{padding:.5rem}
+.ai-col.can .ai-col-body{background:var(--green-lt)}
+.ai-col.cannot .ai-col-body{background:var(--red-lt)}
+.ai-item{
+  padding:.55rem .75rem;font-size:.87rem;color:var(--gray-700);
+  display:flex;align-items:center;gap:.5rem;margin:.2rem 0;
+  background:rgba(255,255,255,.6);border-radius:8px;
+}
+.rule-steps{display:flex;flex-direction:column;gap:.75rem;margin:1rem 0}
+.rule-step{
+  display:flex;align-items:flex-start;gap:.9rem;
+  background:var(--white);border:1px solid var(--gray-200);
+  border-radius:var(--radius);padding:.85rem 1rem;
+}
+.rule-num{
+  background:var(--purple);color:#fff;
+  min-width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;flex-shrink:0;
+}
+.rule-step b{display:block;font-size:.9rem;color:var(--gray-800);margin-bottom:.15rem}
+.rule-step span{font-size:.83rem;color:var(--gray-500)}
+
+/* ════════════════════════════════════════════
+   SECTION 11 — QUICK REFERENCE
+════════════════════════════════════════════ */
+.qref-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1rem}
+.qref-card{border-radius:var(--radius);overflow:hidden}
+.qref-head{padding:.85rem 1rem;font-weight:700;font-size:.88rem;display:flex;align-items:center;gap:.5rem}
+.qref-body{padding:.85rem 1rem}
+.qref-item{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.4rem 0;font-size:.85rem;color:var(--gray-700);
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.qref-item:last-child{border-bottom:none}
+.qref-arrow{color:var(--teal);font-weight:700;flex-shrink:0}
+
+.qref-card.test .qref-head{background:var(--teal);color:#fff}
+.qref-card.test .qref-body{background:var(--teal-lt)}
+.qref-card.pval .qref-head{background:var(--green);color:#fff}
+.qref-card.pval .qref-body{background:var(--green-lt)}
+.qref-card.ai-prompts .qref-head{background:var(--purple);color:#fff}
+.qref-card.ai-prompts .qref-body{background:var(--purple-lt)}
+.qref-card.responsible .qref-head{background:var(--amber);color:#fff}
+.qref-card.responsible .qref-body{background:var(--amber-lt)}
+
+.footer-strip{
+  background:var(--teal-dk);color:rgba(255,255,255,.75);
+  text-align:center;padding:1rem;font-size:.78rem;margin-top:2rem;border-radius:var(--radius);
+}
+.footer-strip a{color:#86efac}
+
+/* ════════════════════════════════════════════
+   PRINT
+════════════════════════════════════════════ */
+@media print{
+  #top-nav{display:none}
+  .section{display:block!important}
+  .btn{display:none}
+}
+
+/* ════════════════════════════════════════════
+   MOBILE
+════════════════════════════════════════════ */
+@media(max-width:680px){
+  #sec-welcome .hero-title{font-size:1.7rem}
+  .result-grid{grid-template-columns:1fr}
+  .code-header,.pre{font-size:.7rem}
+  .container{padding:1.25rem .85rem 3rem}
+}
+
+/* ════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════ */
+#toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--teal-dk);color:#fff;
+  padding:.6rem 1.1rem;border-radius:99px;
+  font-size:.82rem;font-weight:500;
+  opacity:0;pointer-events:none;
+  transform:translateY(8px);
+  transition:all .25s;z-index:999;
+}
+#toast.show{opacity:1;transform:translateY(0)}
+
+/* ════════════════════════════════════════════
+   PROGRESS TRACKER
+════════════════════════════════════════════ */
+
+/* ── Floating toggle button ── */
+#prog-toggle{
+  position:fixed;bottom:80px;right:24px;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--green);color:#fff;
+  border:none;cursor:pointer;
+  box-shadow:0 4px 18px rgba(0,0,0,.2);
+  font-size:1.3rem;z-index:998;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+#prog-toggle:hover{background:var(--green-mid);transform:scale(1.08)}
+#prog-toggle .prog-badge{
+  position:absolute;top:-4px;right:-4px;
+  background:var(--amber);color:#fff;
+  width:20px;height:20px;border-radius:50%;
+  font-size:.65rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--cream);
+  transition:all .2s;
+}
+
+/* ── Drawer panel ── */
+#prog-drawer{
+  position:fixed;bottom:144px;right:24px;
+  width:310px;
+  background:var(--white);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--gray-200);
+  z-index:997;
+  transform:translateY(12px) scale(.97);
+  opacity:0;
+  pointer-events:none;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+#prog-drawer.open{
+  transform:translateY(0) scale(1);
+  opacity:1;
+  pointer-events:all;
+}
+
+/* ── Drawer header ── */
+.prog-head{
+  background:linear-gradient(135deg,var(--teal-dk),var(--green));
+  padding:1rem 1.1rem .85rem;
+  color:#fff;
+}
+.prog-head-top{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:.6rem;
+}
+.prog-head-title{
+  font-family:var(--font-display);font-weight:700;font-size:1rem;
+}
+.prog-head-sub{font-size:.75rem;opacity:.82}
+.prog-close{
+  background:rgba(255,255,255,.18);border:none;color:#fff;
+  width:26px;height:26px;border-radius:50%;cursor:pointer;
+  font-size:.9rem;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+.prog-close:hover{background:rgba(255,255,255,.32)}
+
+/* ── Progress bar ── */
+.prog-bar-wrap{
+  background:rgba(255,255,255,.2);border-radius:99px;
+  height:7px;overflow:hidden;margin-top:.5rem;
+}
+.prog-bar-fill{
+  height:100%;background:#fff;border-radius:99px;
+  transition:width .4s cubic-bezier(.4,0,.2,1);
+}
+.prog-bar-label{
+  display:flex;justify-content:space-between;
+  font-size:.72rem;opacity:.85;margin-top:.3rem;
+}
+
+/* ── Section list ── */
+.prog-list{
+  padding:.5rem .6rem;
+  max-height:340px;overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--sage) transparent;
+}
+.prog-list::-webkit-scrollbar{width:4px}
+.prog-list::-webkit-scrollbar-thumb{background:var(--sage);border-radius:99px}
+
+.prog-item{
+  display:flex;align-items:center;gap:.7rem;
+  padding:.55rem .5rem;
+  border-radius:10px;
+  cursor:pointer;
+  transition:background .15s;
+  user-select:none;
+  position:relative;
+}
+.prog-item:hover{background:var(--gray-50)}
+
+/* Custom checkbox */
+.prog-check{
+  width:22px;height:22px;border-radius:6px;
+  border:2px solid var(--gray-300);
+  background:var(--white);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .18s;font-size:.85rem;
+}
+.prog-item.done .prog-check{
+  background:var(--green);border-color:var(--green);
+  color:#fff;
+}
+.prog-item.auto-visited .prog-check{
+  background:var(--teal-lt);border-color:var(--teal);
+  color:var(--teal);
+}
+
+.prog-item-info{flex:1;min-width:0}
+.prog-item-name{
+  font-size:.85rem;font-weight:600;color:var(--gray-800);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.prog-item.done .prog-item-name{color:var(--green)}
+.prog-item-status{font-size:.71rem;color:var(--gray-400);margin-top:.05rem}
+.prog-item.done .prog-item-status{color:var(--green-mid)}
+.prog-item.auto-visited .prog-item-status{color:var(--teal)}
+
+.prog-nav-btn{
+  background:transparent;border:none;cursor:pointer;
+  font-size:.85rem;color:var(--gray-400);padding:.15rem .25rem;
+  border-radius:4px;transition:color .15s;flex-shrink:0;
+}
+.prog-nav-btn:hover{color:var(--teal)}
+
+/* ── Drawer footer ── */
+.prog-footer{
+  padding:.65rem 1.1rem;
+  border-top:1px solid var(--gray-100);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.5rem;
+}
+.prog-reset{
+  background:transparent;border:1px solid var(--gray-200);
+  color:var(--gray-500);font-size:.75rem;font-weight:500;
+  padding:.3rem .75rem;border-radius:99px;cursor:pointer;
+  font-family:var(--font-body);transition:all .15s;
+}
+.prog-reset:hover{border-color:var(--red);color:var(--red)}
+.prog-complete-msg{
+  font-size:.78rem;font-weight:600;color:var(--green);
+  display:none;align-items:center;gap:.3rem;
+}
+.prog-complete-msg.show{display:flex}
+
+/* ── Nav badge overlay on nav buttons ── */
+.nav-btn .nb{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--green);color:#fff;
+  font-size:.55rem;font-weight:800;
+  margin-left:.3rem;
+  vertical-align:middle;
+  opacity:0;transition:opacity .2s;
+}
+.nav-btn .nb.show{opacity:1}
+
+/* ── Confetti burst (pure CSS, minimal) ── */
+@keyframes confettiFall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1}
+  100%{transform:translateY(60px) rotate(720deg);opacity:0}
+}
+.confetti-piece{
+  position:fixed;pointer-events:none;
+  width:8px;height:8px;border-radius:2px;
+  animation:confettiFall .9s ease-out forwards;
+  z-index:9999;
+}
+
+/* ── Mobile adjustments ── */
+@media(max-width:480px){
+  #prog-drawer{width:calc(100vw - 32px);right:16px}
+  #prog-toggle{right:16px;bottom:72px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ NAV ════ -->
+<nav id="top-nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#" onclick="showSection('sec-welcome');return false">🌱 Plant<span>Stats</span></a>
+    <button class="nav-btn active" onclick="showSection('sec-welcome',this)">Welcome</button>
+    <button class="nav-btn" onclick="showSection('sec-vocab',this)">Key Words</button>
+    <button class="nav-btn" onclick="showSection('sec-dataset',this)">Dataset</button>
+    <button class="nav-btn" onclick="showSection('sec-finder',this)">Test Finder</button>
+    <button class="nav-btn" onclick="showSection('sec-tests',this)">Learn Tests</button>
+    <button class="nav-btn" onclick="showSection('sec-pval',this)">p-value</button>
+    <button class="nav-btn" onclick="showSection('sec-colab',this)">Colab</button>
+    <button class="nav-btn" onclick="showSection('sec-gemini',this)">Gemini AI</button>
+    <button class="nav-btn" onclick="showSection('sec-builder',this)">Result Builder</button>
+    <button class="nav-btn" onclick="showSection('sec-ai',this)">Responsible AI</button>
+    <button class="nav-btn" onclick="showSection('sec-ref',this)">Quick Ref</button>
+  </div>
+</nav>
+
+<div id="toast">✅ Copied!</div>
+
+<!-- ════ PROGRESS TRACKER ════ -->
+<button id="prog-toggle" onclick="toggleDrawer()" title="My Progress" aria-label="Open progress tracker">
+  📋
+  <span class="prog-badge" id="prog-badge">0</span>
+</button>
+
+<div id="prog-drawer" role="dialog" aria-label="Progress tracker">
+  <div class="prog-head">
+    <div class="prog-head-top">
+      <div>
+        <div class="prog-head-title">🌱 My Progress</div>
+        <div class="prog-head-sub">Track your workshop journey</div>
+      </div>
+      <button class="prog-close" onclick="toggleDrawer()" aria-label="Close">✕</button>
+    </div>
+    <div class="prog-bar-wrap">
+      <div class="prog-bar-fill" id="prog-bar-fill" style="width:0%"></div>
+    </div>
+    <div class="prog-bar-label">
+      <span id="prog-count-label">0 of 10 completed</span>
+      <span id="prog-pct-label">0%</span>
+    </div>
+  </div>
+
+  <div class="prog-list" id="prog-list">
+    <!-- items injected by JS -->
+  </div>
+
+  <div class="prog-footer">
+    <button class="prog-reset" onclick="resetProgress()">🔄 Reset all</button>
+    <div class="prog-complete-msg" id="prog-complete-msg">🎉 All done!</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+  SECTION 1 — WELCOME
+════════════════════════════════════════ -->
+<section id="sec-welcome" class="section active">
+<div class="container">
+  <div class="hero-main">
+    <div style="font-size:3.5rem;margin-bottom:.75rem">🌱</div>
+    <div class="hero-title">PlantStats<span> AI</span> Companion</div>
+    <div class="hero-sub">An Interactive Statistics Guide for Plant Science Students</div>
+    <div class="hero-message">
+      💬 <strong>Do not worry if you are not good at mathematics.</strong>
+      This app will guide you step by step — from understanding your research question to writing your result sentence.
+    </div>
+    <div class="hero-btns">
+      <button class="btn btn-secondary" onclick="showSection('sec-vocab',null)">📖 Start Learning</button>
+      <button class="btn btn-secondary" onclick="showSection('sec-finder',null)">🔍 Choose My Statistical Test</button>
+    </div>
+  </div>
+
+  <div class="info-strip">
+    <div class="info-chip"><div class="chip-icon">💻</div><span class="chip-label">Platform</span><div class="chip-val">Google Colab + Gemini AI</div></div>
+    <div class="info-chip"><div class="chip-icon">📊</div><span class="chip-label">Dataset</span><div class="chip-val">plant_simple.csv</div></div>
+    <div class="info-chip"><div class="chip-icon">🧪</div><span class="chip-label">Tests Covered</span><div class="chip-val">4 beginner tests</div></div>
+    <div class="info-chip"><div class="chip-icon">⏱</div><span class="chip-label">Duration</span><div class="chip-val">2-hour workshop</div></div>
+    <div class="info-chip"><div class="chip-icon">👩‍🏫</div><span class="chip-label">Speaker</span><div class="chip-val">Dr Hafizah Bahaludin</div></div>
+  </div>
+
+  <div style="margin-top:1.5rem" class="grid-2">
+    <div class="card card-teal">
+      <h3 class="card-title">📋 What You Will Learn Today</h3>
+      <ul>
+        <li>How to identify the right statistical test</li>
+        <li>How to run 4 tests in Google Colab</li>
+        <li>How to read and interpret p-values</li>
+        <li>How to write a result sentence for your FYP</li>
+        <li>How to use Gemini AI responsibly</li>
+      </ul>
+    </div>
+    <div class="card card-green">
+      <h3 class="card-title">🗺 App Guide</h3>
+      <ul>
+        <li><strong>Key Words</strong> — flashcards for statistics vocabulary</li>
+        <li><strong>Dataset</strong> — understand the data you will use</li>
+        <li><strong>Test Finder</strong> — interactive tool to choose the right test</li>
+        <li><strong>Learn Tests</strong> — detailed cards for each test</li>
+        <li><strong>p-value</strong> — enter a value and get an interpretation</li>
+        <li><strong>Colab</strong> — copy-ready Python code</li>
+        <li><strong>Gemini AI</strong> — ready-to-use prompts</li>
+        <li><strong>Result Builder</strong> — generate your result sentence</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-note">
+    <div class="callout-icon">📌</div>
+    <div>This app is based on the workshop handout for the module <strong>"Statistics for Plant Science — 2-Hour Workshop"</strong> by Dr Hafizah Bahaludin, Department of Computational and Theoretical Sciences (CTS), Kulliyyah of Science (KOS), IIUM. Materials: <a href="https://github.com/HafizahBaha/statisticsgeminiai" target="_blank" style="color:var(--teal-dk);font-weight:600">github.com/HafizahBaha/statisticsgeminiai</a></div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 2 — KEY WORDS
+════════════════════════════════════════ -->
+<section id="sec-vocab" class="section">
+<div class="container">
+  <div class="section-hero">
+    <h2>📚 Key Statistics Words</h2>
+    <p>Click each card to flip it and see the explanation and example.</p>
+  </div>
+
+  <div class="flashcard-grid">
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="fc-front"><div class="fc-term">Variable</div><div class="fc-hint">Tap to see explanation</div></div>
+        <div class="fc-back"><div class="fc-def">Anything you measure or record in your experiment.</div><div class="fc-ex">🌱 e.g. plant height, treatment type, leaf number</div></div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="fc-front" style="background:var(--green)"><div class="fc-term">Independent Variable (IV)</div><div class="fc-hint">Tap to see explanation</div></div>
+        <div class="fc-back"><div class="fc-def">The thing <strong>you</strong> change or control in your experiment.</div><div class="fc-ex">🧪 e.g. fertilizer level (Control / Low / High)</div></div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="fc-front" style="background:var(--teal-mid)"><div class="fc-term">Dependent Variable (DV)</div><div class="fc-hint">Tap to see explanation</div></div>
+        <div class="fc-back"><div class="fc-def">The thing you <strong>measure</strong> — it depends on what you did to the plants.</div><div class="fc-ex">📏 e.g. plant height (cm), fresh weight (g)</div></div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="fc-front" style="background:#0f766e"><div class="fc-term">Numerical Variable</div><div class="fc-hint">Tap to see explanation</div></div>
+        <div class="fc-back"><div class="fc-def">A variable measured as a <strong>number</strong> you can calculate with.</div><div class="fc-ex">📊 e.g. height = 24.5 cm, weight = 8.3 g, leaves = 7</div></div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="fc-front" style="background:#7c3aed"><div class="fc-term">Categorical Variable</div><div class="fc-hint">Tap to see explanation</div></div>
+        <div class="fc-back"><div class="fc-def">A variable measured as a <strong>label or group</strong> — not a number.</div><div class="fc-ex">🏷 e.g. Germinated / Not Germinated, Control / Fertilizer</div></div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="fc-front" style="background:#d97706"><div class="fc-term">p-value</div><div class="fc-hint">Tap to see explanation</div></div>
+        <div class="fc-back"><div class="fc-def">A number (between 0 and 1) that tells you if your result is <strong>real or just random chance</strong>.</div><div class="fc-ex">📉 Rule: p &lt; 0.05 = real result ✅</div></div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="fc-front" style="background:#166534"><div class="fc-term">Significant Result</div><div class="fc-hint">Tap to see explanation</div></div>
+        <div class="fc-back"><div class="fc-def">When p &lt; 0.05, the result is <strong>statistically significant</strong> — it is unlikely to be random chance.</div><div class="fc-ex">✅ This means the fertilizer likely <em>did</em> make a difference!</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pval-card">
+    <h3>📌 The Most Important Rule</h3>
+    <div class="pval-rows">
+      <div class="pval-row">
+        <div class="pval-rule">p &lt; 0.05</div>
+        <div>✅ Statistically SIGNIFICANT</div>
+        <div class="pval-desc" style="margin-top:.3rem">The result is real — not just random chance</div>
+      </div>
+      <div class="pval-row">
+        <div class="pval-rule">p ≥ 0.05</div>
+        <div>❌ NOT Significant</div>
+        <div class="pval-desc" style="margin-top:.3rem">The difference might just be random chance</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 3 — DATASET
+════════════════════════════════════════ -->
+<section id="sec-dataset" class="section">
+<div class="container">
+  <div class="section-hero">
+    <h2>📂 Meet the Dataset: plant_simple.csv</h2>
+    <p>60 plants · 6 columns · 3 treatment groups — simple and ready to use</p>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:1.25rem">
+    <div class="card" style="text-align:center;border-top:3px solid var(--teal)">
+      <div style="font-size:2.2rem">🌱</div>
+      <div style="font-size:2rem;font-weight:800;color:var(--teal);font-family:var(--font-display)">60</div>
+      <div style="font-size:.85rem;color:var(--gray-500)">Plants total</div>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--green)">
+      <div style="font-size:2.2rem">📊</div>
+      <div style="font-size:2rem;font-weight:800;color:var(--green);font-family:var(--font-display)">6</div>
+      <div style="font-size:.85rem;color:var(--gray-500)">Columns (variables)</div>
+    </div>
+    <div class="card" style="text-align:center;border-top:3px solid var(--purple)">
+      <div style="font-size:2.2rem">🧪</div>
+      <div style="font-size:2rem;font-weight:800;color:var(--purple);font-family:var(--font-display)">3</div>
+      <div style="font-size:.85rem;color:var(--gray-500)">Treatment groups (20 each)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">Treatment Groups</h3>
+    <div class="grid-3">
+      <div style="background:var(--gray-100);border-radius:var(--radius);padding:.85rem;text-align:center">
+        <div style="font-size:1.5rem">⚪</div>
+        <div style="font-weight:700;color:var(--gray-700)">Control</div>
+        <div style="font-size:.8rem;color:var(--gray-400)">No fertilizer — 20 plants</div>
+      </div>
+      <div style="background:var(--teal-lt);border-radius:var(--radius);padding:.85rem;text-align:center">
+        <div style="font-size:1.5rem">🟢</div>
+        <div style="font-weight:700;color:var(--teal-dk)">Low Fertilizer</div>
+        <div style="font-size:.8rem;color:var(--gray-400)">Low dose — 20 plants</div>
+      </div>
+      <div style="background:var(--green-lt);border-radius:var(--radius);padding:.85rem;text-align:center">
+        <div style="font-size:1.5rem">🌿</div>
+        <div style="font-weight:700;color:var(--green)">High Fertilizer</div>
+        <div style="font-size:.8rem;color:var(--gray-400)">High dose — 20 plants</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">Column Guide</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Column Name</th><th>Data Type</th><th>Role</th><th>Suitable Test</th></tr></thead>
+        <tbody>
+          <tr><td><code>Plant_ID</code></td><td>Text (P01, P02…)</td><td><span class="badge badge-teal">Identifier</span></td><td>Not used in analysis</td></tr>
+          <tr><td><code>Treatment</code></td><td>Categorical (3 groups)</td><td><span class="badge badge-green">Independent Variable</span></td><td>t-test, ANOVA, Chi-square</td></tr>
+          <tr><td><code>Plant_Height_cm</code></td><td>Number (cm)</td><td><span class="badge badge-amber">Dependent Variable</span></td><td>t-test, ANOVA, Correlation</td></tr>
+          <tr><td><code>Leaf_Number</code></td><td>Whole number</td><td><span class="badge badge-amber">Dependent Variable</span></td><td>ANOVA, Correlation</td></tr>
+          <tr><td><code>Fresh_Weight_g</code></td><td>Number (grams)</td><td><span class="badge badge-amber">Dependent Variable</span></td><td>Correlation</td></tr>
+          <tr><td><code>Germination</code></td><td>Categorical (2 groups)</td><td><span class="badge badge-amber">Dependent Variable</span></td><td>Chi-square</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">Data Preview (first 5 rows)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Plant_ID</th><th>Treatment</th><th>Height_cm</th><th>Leaf_No</th><th>Fresh_Wt_g</th><th>Germination</th></tr></thead>
+        <tbody>
+          <tr><td>P01</td><td>Low Fertilizer</td><td>19.3</td><td>7</td><td>9.92</td><td>Germinated</td></tr>
+          <tr><td>P02</td><td>Low Fertilizer</td><td>25.2</td><td>6</td><td>14.53</td><td>Germinated</td></tr>
+          <tr><td>P03</td><td>High Fertilizer</td><td>31.0</td><td>9</td><td>12.97</td><td>Germinated</td></tr>
+          <tr><td>P04</td><td>Control</td><td>17.5</td><td>8</td><td>10.34</td><td>Not Germinated</td></tr>
+          <tr><td>P05</td><td>Control</td><td>13.2</td><td>4</td><td>5.73</td><td>Not Germinated</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3 class="card-title">🔬 Research Questions You Can Answer</h3>
+    <div class="grid-2">
+      <div class="callout callout-tip"><div class="callout-icon">📏</div><div>Is plant height <strong>different between treatment groups</strong>? → t-test or ANOVA</div></div>
+      <div class="callout callout-tip"><div class="callout-icon">🏆</div><div>Which fertilizer level gives the <strong>tallest plants</strong>? → One-Way ANOVA</div></div>
+      <div class="callout callout-tip"><div class="callout-icon">⚖</div><div>Do <strong>taller plants also weigh more</strong>? → Pearson Correlation</div></div>
+      <div class="callout callout-tip"><div class="callout-icon">🌱</div><div>Is <strong>germination success</strong> linked to treatment type? → Chi-square Test</div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 4 — TEST FINDER
+════════════════════════════════════════ -->
+<section id="sec-finder" class="section">
+<div class="container">
+  <div class="section-hero">
+    <h2>🔍 Statistical Test Finder</h2>
+    <p>Answer 2–3 simple questions and the app will recommend the right test for you.</p>
+  </div>
+
+  <div id="finder-wrap">
+    <!-- Progress -->
+    <div class="finder-progress" id="finder-progress">
+      <span style="font-size:.8rem;font-weight:600;color:var(--gray-500);margin-right:.3rem">Step:</span>
+      <div class="prog-dot active" id="pd1"></div>
+      <div class="prog-dot" id="pd2"></div>
+      <div class="prog-dot" id="pd3"></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="finder-step active" id="fs1">
+      <div class="finder-q">❓ Question 1 of 3</div>
+      <div class="finder-hint">What type is your <strong>Dependent Variable (DV)</strong>? — This is the thing you are measuring.</div>
+      <div class="finder-opts">
+        <button class="finder-opt" onclick="finderNext(1,'numerical')">
+          <div class="opt-icon">📏</div>
+          <div class="opt-text"><b>Numerical</b><span>A measurement with a number — e.g. plant height = 24.5 cm, fresh weight = 8.3 g</span></div>
+        </button>
+        <button class="finder-opt" onclick="finderNext(1,'categorical')">
+          <div class="opt-icon">🏷</div>
+          <div class="opt-text"><b>Categorical</b><span>A label or group — e.g. Germinated / Not Germinated, Mild / Severe</span></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2a — DV is numerical -->
+    <div class="finder-step" id="fs2a">
+      <div class="finder-q">❓ Question 2 of 3</div>
+      <div class="finder-hint">Your DV is <strong>numerical</strong>. Now — what type is your <strong>Independent Variable (IV)</strong>?</div>
+      <div class="finder-opts">
+        <button class="finder-opt" onclick="finderNext(2,'ttest')">
+          <div class="opt-icon">👥</div>
+          <div class="opt-text"><b>Categorical — exactly 2 groups</b><span>e.g. Control vs Fertilizer</span></div>
+        </button>
+        <button class="finder-opt" onclick="finderNext(2,'anova')">
+          <div class="opt-icon">👥👥👥</div>
+          <div class="opt-text"><b>Categorical — 3 or more groups</b><span>e.g. Control, Low Fertilizer, High Fertilizer</span></div>
+        </button>
+        <button class="finder-opt" onclick="finderNext(2,'corr')">
+          <div class="opt-icon">📊</div>
+          <div class="opt-text"><b>Also Numerical</b><span>e.g. fertilizer amount (g) predicting plant height</span></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2b — DV is categorical -->
+    <div class="finder-step" id="fs2b">
+      <div class="finder-q">❓ Question 2 of 3</div>
+      <div class="finder-hint">Your DV is <strong>categorical</strong>. Is your <strong>Independent Variable (IV)</strong> also categorical?</div>
+      <div class="finder-opts">
+        <button class="finder-opt" onclick="finderNext(2,'chisq')">
+          <div class="opt-icon">🔲</div>
+          <div class="opt-text"><b>Yes — both are categorical</b><span>e.g. Treatment (Control/Low/High) and Germination (Germinated / Not Germinated)</span></div>
+        </button>
+      </div>
+      <div class="callout callout-note" style="margin-top:1rem">
+        <div class="callout-icon">📌</div>
+        <div>If both variables are categories (labels), you always use the <strong>Chi-square test</strong>.</div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="finder-result" id="fr-ttest">
+      <div class="result-badge">✅ Recommended Test: Independent Samples t-test</div>
+      <div class="result-grid">
+        <div class="result-item"><label>Why this test?</label><span>You have 2 independent groups and a numerical outcome — the t-test compares their means.</span></div>
+        <div class="result-item"><label>Plant Example</label><span>Is plant height different between Control and High Fertilizer?</span></div>
+        <div class="result-item"><label>Independent Variable (IV)</label><span>Treatment (2 groups: Control, Fertilizer)</span></div>
+        <div class="result-item"><label>Dependent Variable (DV)</label><span>Plant_Height_cm (numerical)</span></div>
+        <div class="result-item"><label>What to Report</label><span>t-statistic, degrees of freedom (df), p-value</span></div>
+        <div class="result-item"><label>Significant if…</label><span>p &lt; 0.05</span></div>
+      </div>
+      <div class="template-box"><span class="template-label">✍ Result Sentence Template</span><p>"An independent samples t-test was conducted to compare [DV] between [Group A] and [Group B]. The result showed a statistically significant difference, t(df) = X.XX, p = 0.0XX."</p></div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
+        <button class="btn btn-primary btn-sm" onclick="showSection('sec-tests',null);setTestTab('ttest')">📖 Learn More About t-test</button>
+        <button class="btn btn-secondary btn-sm" onclick="resetFinder()">🔄 Try Again</button>
+      </div>
+    </div>
+
+    <div class="finder-result" id="fr-anova">
+      <div class="result-badge" style="background:var(--green)">✅ Recommended Test: One-Way ANOVA</div>
+      <div class="result-grid">
+        <div class="result-item"><label>Why this test?</label><span>You have 3+ independent groups — ANOVA tests all at once to avoid false positives.</span></div>
+        <div class="result-item"><label>Plant Example</label><span>Does fertilizer level (Control, Low, High) affect plant height?</span></div>
+        <div class="result-item"><label>Independent Variable (IV)</label><span>Fertilizer Level (3+ groups)</span></div>
+        <div class="result-item"><label>Dependent Variable (DV)</label><span>Plant_Height_cm (numerical)</span></div>
+        <div class="result-item"><label>What to Report</label><span>F-statistic, df, p-value, post-hoc if significant</span></div>
+        <div class="result-item"><label>Significant if…</label><span>p &lt; 0.05 (at least one group differs)</span></div>
+      </div>
+      <div class="callout callout-warn"><div class="callout-icon">⚠</div><div>ANOVA tells you <strong>at least one group is different</strong> — but not <em>which</em> one. Run a post-hoc test (Tukey's HSD) to find out.</div></div>
+      <div class="template-box"><span class="template-label">✍ Result Sentence Template</span><p>"A one-way ANOVA was conducted to compare [DV] across [groups]. There was a statistically significant effect of [IV] on [DV], F(df1, df2) = X.XX, p = 0.0XX."</p></div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
+        <button class="btn btn-primary btn-sm" onclick="showSection('sec-tests',null);setTestTab('anova')">📖 Learn More About ANOVA</button>
+        <button class="btn btn-secondary btn-sm" onclick="resetFinder()">🔄 Try Again</button>
+      </div>
+    </div>
+
+    <div class="finder-result" id="fr-corr">
+      <div class="result-badge" style="background:var(--purple)">✅ Recommended Test: Pearson Correlation</div>
+      <div class="result-grid">
+        <div class="result-item"><label>Why this test?</label><span>Both variables are numerical — Pearson r measures how strongly they move together.</span></div>
+        <div class="result-item"><label>Plant Example</label><span>Do taller plants also weigh more? (Height vs Fresh Weight)</span></div>
+        <div class="result-item"><label>Variable 1</label><span>Plant_Height_cm (numerical)</span></div>
+        <div class="result-item"><label>Variable 2</label><span>Fresh_Weight_g (numerical)</span></div>
+        <div class="result-item"><label>What to Report</label><span>Pearson r, p-value</span></div>
+        <div class="result-item"><label>Remember</label><span>Correlation ≠ Causation!</span></div>
+      </div>
+      <div class="template-box"><span class="template-label">✍ Result Sentence Template</span><p>"A Pearson correlation was conducted to examine the relationship between [Variable 1] and [Variable 2]. There was a statistically significant positive/negative correlation, r = 0.XX, p = 0.0XX."</p></div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
+        <button class="btn btn-primary btn-sm" onclick="showSection('sec-tests',null);setTestTab('corr')">📖 Learn More About Correlation</button>
+        <button class="btn btn-secondary btn-sm" onclick="resetFinder()">🔄 Try Again</button>
+      </div>
+    </div>
+
+    <div class="finder-result" id="fr-chisq">
+      <div class="result-badge" style="background:var(--amber)">✅ Recommended Test: Chi-Square Test</div>
+      <div class="result-grid">
+        <div class="result-item"><label>Why this test?</label><span>Both variables are categorical — chi-square tests if they are statistically associated.</span></div>
+        <div class="result-item"><label>Plant Example</label><span>Is germination outcome linked to treatment group?</span></div>
+        <div class="result-item"><label>Variable 1</label><span>Treatment (Control / Low / High)</span></div>
+        <div class="result-item"><label>Variable 2</label><span>Germination (Germinated / Not Germinated)</span></div>
+        <div class="result-item"><label>What to Report</label><span>χ², degrees of freedom (df), p-value</span></div>
+        <div class="result-item"><label>Significant if…</label><span>p &lt; 0.05 (the two categories are related)</span></div>
+      </div>
+      <div class="template-box"><span class="template-label">✍ Result Sentence Template</span><p>"A chi-square test of independence was conducted to examine whether [Variable 1] and [Variable 2] were associated. The result was statistically significant, χ²(df) = X.XX, p = 0.0XX."</p></div>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem">
+        <button class="btn btn-primary btn-sm" onclick="showSection('sec-tests',null);setTestTab('chisq')">📖 Learn More About Chi-Square</button>
+        <button class="btn btn-secondary btn-sm" onclick="resetFinder()">🔄 Try Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 5 — TEST LEARNING CARDS
+════════════════════════════════════════ -->
+<section id="sec-tests" class="section">
+<div class="container">
+  <div class="section-hero">
+    <h2>🧪 Learn the 4 Statistical Tests</h2>
+    <p>Select a test below to explore when to use it, how to read the output, and how to write the result.</p>
+  </div>
+
+  <div class="test-tabs">
+    <button class="test-tab active" onclick="setTestTab('ttest')">📊 t-test</button>
+    <button class="test-tab" onclick="setTestTab('anova')">📈 One-Way ANOVA</button>
+    <button class="test-tab" onclick="setTestTab('corr')">🔗 Pearson Correlation</button>
+    <button class="test-tab" onclick="setTestTab('chisq')">🔲 Chi-Square</button>
+  </div>
+
+  <!-- t-test panel -->
+  <div class="test-panel active" id="tp-ttest">
+    <div class="test-header">
+      <h3>📊 Independent Samples t-test</h3>
+      <p>Compare the mean of a numerical variable between exactly 2 independent groups.</p>
+    </div>
+    <div class="when-use"><strong>✅ When to Use</strong><p>Use when you are comparing the <strong>mean</strong> of a numerical variable between <strong>exactly 2 groups</strong>, and the groups are different (independent) plants.</p></div>
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="card-title">Research Setup</h3>
+        <div class="tbl-wrap"><table><tbody>
+          <tr><td><strong>Example Question</strong></td><td>Is plant height different between Control and High Fertilizer?</td></tr>
+          <tr><td><strong>IV</strong></td><td>Treatment (2 groups)</td></tr>
+          <tr><td><strong>DV</strong></td><td>Plant_Height_cm (numerical)</td></tr>
+          <tr><td><strong>Output</strong></td><td>t-statistic, df, p-value</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Interpretation Guide</h3>
+        <div class="callout callout-tip"><div class="callout-icon">✅</div><div><strong>p &lt; 0.05:</strong> The two groups are significantly different.</div></div>
+        <div class="callout callout-warn"><div class="callout-icon">❌</div><div><strong>p ≥ 0.05:</strong> No significant difference between the groups.</div></div>
+        <div class="callout callout-note"><div class="callout-icon">📌</div><div>Focus on the p-value. The t-statistic shows the size of the difference.</div></div>
+      </div>
+    </div>
+    <div class="template-box"><span class="template-label">✍ Result Sentence Template</span><p>"An independent samples t-test was conducted to compare plant height between the [Group A] and [Group B] groups. The result showed a statistically significant difference, t(df) = X.XX, p = 0.0XX. The [Group A] group had a higher mean plant height (M = X.XX cm) compared to [Group B] (M = X.XX cm)."</p><button class="btn btn-copy btn-sm" onclick="copyText('An independent samples t-test was conducted to compare plant height between the [Group A] and [Group B] groups. The result showed a statistically significant difference, t(df) = X.XX, p = 0.0XX. The [Group A] group had a higher mean plant height (M = X.XX cm) compared to [Group B] (M = X.XX cm).',this)">📋 Copy Template</button></div>
+  </div>
+
+  <!-- ANOVA panel -->
+  <div class="test-panel" id="tp-anova">
+    <div class="test-header" style="background:var(--green)">
+      <h3>📈 One-Way ANOVA</h3>
+      <p>Compare the mean of a numerical variable across 3 or more groups simultaneously.</p>
+    </div>
+    <div class="when-use" style="background:#dcfce7;border-color:#86efac"><strong>✅ When to Use</strong><p>Use when you are comparing the <strong>mean</strong> of a numerical variable across <strong>3 or more groups</strong>.</p></div>
+    <div class="callout callout-warn"><div class="callout-icon">⚠</div><div><strong>Why not just run 3 t-tests?</strong> Running multiple t-tests increases your chance of a false positive. ANOVA tests all groups at once — it is the correct method.</div></div>
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="card-title">Research Setup</h3>
+        <div class="tbl-wrap"><table><tbody>
+          <tr><td><strong>Example Question</strong></td><td>Does fertilizer level affect plant height across Control, Low, High?</td></tr>
+          <tr><td><strong>IV</strong></td><td>Fertilizer Level (3 groups)</td></tr>
+          <tr><td><strong>DV</strong></td><td>Plant_Height_cm (numerical)</td></tr>
+          <tr><td><strong>Output</strong></td><td>F-statistic, df1, df2, p-value</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Interpretation Guide</h3>
+        <div class="callout callout-tip"><div class="callout-icon">✅</div><div><strong>p &lt; 0.05:</strong> At least one group is significantly different.</div></div>
+        <div class="callout callout-warn"><div class="callout-icon">❌</div><div><strong>p ≥ 0.05:</strong> No significant difference across groups.</div></div>
+        <div class="callout callout-note"><div class="callout-icon">📌</div><div>ANOVA says <em>someone</em> is different. Run a <strong>Tukey's HSD post-hoc test</strong> to find out which pairs differ.</div></div>
+      </div>
+    </div>
+    <div class="template-box"><span class="template-label">✍ Result Sentence Template</span><p>"A one-way ANOVA showed a statistically significant effect of fertilizer level on plant height, F(2, 57) = X.XX, p = 0.0XX. The High Fertilizer group had the highest mean plant height (M = X.XX cm), followed by Low Fertilizer (M = X.XX cm) and Control (M = X.XX cm)."</p><button class="btn btn-copy btn-sm" onclick="copyText('A one-way ANOVA showed a statistically significant effect of fertilizer level on plant height, F(2, 57) = X.XX, p = 0.0XX. The High Fertilizer group had the highest mean plant height (M = X.XX cm), followed by Low Fertilizer (M = X.XX cm) and Control (M = X.XX cm).',this)">📋 Copy Template</button></div>
+  </div>
+
+  <!-- Correlation panel -->
+  <div class="test-panel" id="tp-corr">
+    <div class="test-header" style="background:var(--purple)">
+      <h3>🔗 Pearson Correlation</h3>
+      <p>Measure the strength and direction of the relationship between two numerical variables.</p>
+    </div>
+    <div class="when-use" style="background:var(--purple-lt);border-color:#c4b5fd"><strong>✅ When to Use</strong><p>Use when you want to know if <strong>two numerical variables</strong> are related. You are NOT comparing groups — you are looking for a pattern.</p></div>
+    <div class="callout callout-warn"><div class="callout-icon">⚠</div><div><strong>Correlation is NOT causation!</strong> If r = 0.85 between plant height and fresh weight, it means they are related — not that height <em>causes</em> weight. Both might be caused by the fertilizer.</div></div>
+    <div class="card" style="margin:.75rem 0">
+      <h3 class="card-title">Understanding r (correlation coefficient)</h3>
+      <div class="tbl-wrap"><table class="r-table">
+        <thead><tr><th>r value</th><th>Strength</th><th>Direction</th><th>Plain English</th></tr></thead>
+        <tbody>
+          <tr><td>+0.7 to +1.0</td><td>Strong</td><td>Positive</td><td>As X goes up, Y clearly goes up too</td></tr>
+          <tr><td>+0.4 to +0.6</td><td>Moderate</td><td>Positive</td><td>Some upward trend</td></tr>
+          <tr><td>~0.0</td><td>None</td><td>None</td><td>No relationship at all</td></tr>
+          <tr><td>-0.4 to -0.6</td><td>Moderate</td><td>Negative</td><td>As X goes up, Y tends to go down</td></tr>
+          <tr><td>-0.7 to -1.0</td><td>Strong</td><td>Negative</td><td>Clear downward trend</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="template-box"><span class="template-label">✍ Result Sentence Template</span><p>"A Pearson correlation was conducted to examine the relationship between plant height and fresh weight. There was a statistically significant positive correlation between the two variables, r = 0.XX, p = 0.0XX. This indicates that as plant height increased, fresh weight also tended to increase."</p><button class="btn btn-copy btn-sm" onclick="copyText('A Pearson correlation was conducted to examine the relationship between plant height and fresh weight. There was a statistically significant positive correlation between the two variables, r = 0.XX, p = 0.0XX. This indicates that as plant height increased, fresh weight also tended to increase.',this)">📋 Copy Template</button></div>
+  </div>
+
+  <!-- Chi-square panel -->
+  <div class="test-panel" id="tp-chisq">
+    <div class="test-header" style="background:var(--amber)">
+      <h3>🔲 Chi-Square Test of Independence</h3>
+      <p>Test whether two categorical variables are statistically associated.</p>
+    </div>
+    <div class="when-use" style="background:var(--amber-lt);border-color:#fcd34d"><strong>✅ When to Use</strong><p>Use when <strong>both your variables are categorical</strong> (labels/groups) and you want to know if they are related to each other.</p></div>
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="card-title">Research Setup</h3>
+        <div class="tbl-wrap"><table><tbody>
+          <tr><td><strong>Example Question</strong></td><td>Is germination outcome linked to treatment group?</td></tr>
+          <tr><td><strong>Variable 1</strong></td><td>Treatment (Control / Low / High)</td></tr>
+          <tr><td><strong>Variable 2</strong></td><td>Germination (Germinated / Not Germinated)</td></tr>
+          <tr><td><strong>Both Types</strong></td><td>Categorical — labels, not numbers</td></tr>
+          <tr><td><strong>Output</strong></td><td>χ², degrees of freedom, p-value</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Interpretation Guide</h3>
+        <div class="callout callout-tip"><div class="callout-icon">✅</div><div><strong>p &lt; 0.05:</strong> The two categorical variables ARE related.</div></div>
+        <div class="callout callout-warn"><div class="callout-icon">❌</div><div><strong>p ≥ 0.05:</strong> No significant association found.</div></div>
+        <div class="callout callout-note"><div class="callout-icon">📌</div><div>The contingency table shows the <strong>count</strong> of plants in each combination. Chi-square tests whether these counts are what you'd expect if there was no relationship.</div></div>
+      </div>
+    </div>
+    <div class="template-box"><span class="template-label">✍ Result Sentence Template</span><p>"A chi-square test of independence was conducted to determine whether germination outcome was associated with treatment group. The result was statistically significant, χ²(2) = X.XX, p = 0.0XX, indicating that treatment group significantly influenced germination success."</p><button class="btn btn-copy btn-sm" onclick="copyText('A chi-square test of independence was conducted to determine whether germination outcome was associated with treatment group. The result was statistically significant, χ²(2) = X.XX, p = 0.0XX, indicating that treatment group significantly influenced germination success.',this)">📋 Copy Template</button></div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 6 — p-VALUE INTERPRETER
+════════════════════════════════════════ -->
+<section id="sec-pval" class="section">
+<div class="container">
+  <div class="section-hero">
+    <h2>📉 p-value Interpreter</h2>
+    <p>Enter any p-value and the app will instantly explain what it means.</p>
+  </div>
+
+  <div class="pval-interpreter">
+    <div class="pval-input-zone">
+      <label>Enter your p-value (a number between 0 and 1):</label>
+      <input class="pval-input" type="number" id="pval-in" placeholder="e.g. 0.032" min="0" max="1" step="0.001" oninput="interpretPval()"/>
+      <div style="margin-top:.6rem;font-size:.8rem;color:var(--gray-400)">Try: 0.001 · 0.032 · 0.05 · 0.12 · 0.450</div>
+    </div>
+    <div class="pval-result-zone" id="pval-result-zone">
+      <div style="text-align:center;color:var(--gray-300);padding:2rem">
+        <div style="font-size:2.5rem;margin-bottom:.5rem">🔢</div>
+        <div style="font-size:.9rem">Enter a p-value above to see the interpretation</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem">
+    <h3 class="card-title">📋 Quick p-value Reference</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>p-value</th><th>Significance</th><th>What to Write</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--green);font-weight:700;font-family:var(--font-mono)">p = 0.001</td><td><span class="badge badge-green">Highly Significant</span></td><td>p = 0.001 — very strong evidence</td></tr>
+        <tr><td style="color:var(--green);font-weight:700;font-family:var(--font-mono)">p = 0.023</td><td><span class="badge badge-green">Significant</span></td><td>p = 0.023 — significant at α = 0.05</td></tr>
+        <tr><td style="color:var(--amber);font-weight:700;font-family:var(--font-mono)">p = 0.050</td><td><span class="badge badge-amber">Borderline</span></td><td>p = 0.050 — right at the threshold</td></tr>
+        <tr><td style="color:var(--red);font-weight:700;font-family:var(--font-mono)">p = 0.082</td><td><span class="badge badge-red">Not Significant</span></td><td>p = 0.082 — not enough evidence</td></tr>
+        <tr><td style="color:var(--red);font-weight:700;font-family:var(--font-mono)">p = 0.450</td><td><span class="badge badge-red">Not Significant</span></td><td>p = 0.450 — no evidence of an effect</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-icon">⚠</div>
+    <div><strong>Important:</strong> Significant does <em>not</em> always mean important. Always think about the <strong>biological meaning</strong> of your result. A statistically significant difference might still be very small in practice.</div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 7 — COLAB COMPANION
+════════════════════════════════════════ -->
+<section id="sec-colab" class="section">
+<div class="container">
+  <div class="section-hero">
+    <h2>💻 Google Colab Companion</h2>
+    <p>Step-by-step setup guide with copy-ready Python code for all 4 statistical tests.</p>
+  </div>
+
+  <div class="card card-teal" style="margin-bottom:1.25rem">
+    <h3 class="card-title">⚙ Step 1 — Set Up Google Colab</h3>
+    <div class="step-flow">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text"><b>Open Google Colab</b><span>Go to <a href="https://colab.research.google.com" target="_blank" style="color:var(--teal-dk)">colab.research.google.com</a> — sign in with your Google account.</span></div>
+      </div>
+      <div class="arrow-down">▼</div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text"><b>Create a New Notebook</b><span>Click File → New notebook. You will see a blank code cell.</span></div>
+      </div>
+      <div class="arrow-down">▼</div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text"><b>Upload the Dataset</b><span>Click the 📁 folder icon on the left sidebar → Upload → choose <code>plant_simple.csv</code></span></div>
+      </div>
+      <div class="arrow-down">▼</div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text"><b>Copy &amp; Run Each Cell Below</b><span>Copy a cell block into Colab, then press <strong>Shift + Enter</strong> to run it.</span></div>
+      </div>
+    </div>
+    <div class="callout callout-tip"><div class="callout-icon">💡</div><div>Run cells <strong>one at a time</strong>, from top to bottom. Do not skip Cell 1 — all other cells depend on it.</div></div>
+  </div>
+
+  <!-- Cell tabs -->
+  <div class="cell-tabs" id="cell-tabs">
+    <button class="cell-tab active" onclick="setCell('c1')">Cell 1 — Libraries</button>
+    <button class="cell-tab" onclick="setCell('c2')">Cell 2 — Load Data</button>
+    <button class="cell-tab" onclick="setCell('c3')">Cell 3 — t-test</button>
+    <button class="cell-tab" onclick="setCell('c4')">Cell 4 — ANOVA</button>
+    <button class="cell-tab" onclick="setCell('c5')">Cell 5 — Correlation</button>
+    <button class="cell-tab" onclick="setCell('c6')">Cell 6 — Chi-square</button>
+    <button class="cell-tab" onclick="setCell('c7')">Cell 7 — Charts</button>
+  </div>
+
+  <div class="cell-panel active" id="cp-c1">
+    <div class="callout callout-tip" style="margin-bottom:.75rem"><div class="callout-icon">💡</div><div>Run this <strong>first</strong>. It loads all the tools you need. If you see <code>✅ Libraries loaded!</code> you are ready.</div></div>
+    <div class="code-wrap"><div class="code-header"><span>Cell 1 — Import Libraries</span><button class="btn-copy" onclick="copyCode('code-c1',this)">📋 Copy Code</button></div><pre id="code-c1"># CELL 1 — Import all the tools we need
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import ttest_ind, f_oneway, pearsonr, chi2_contingency
+import warnings
+warnings.filterwarnings("ignore")
+print("✅ Libraries loaded!")</pre></div>
+  </div>
+
+  <div class="cell-panel" id="cp-c2">
+    <div class="callout callout-note" style="margin-bottom:.75rem"><div class="callout-icon">📌</div><div>Make sure you have uploaded <code>plant_simple.csv</code> first. You should see 60 rows and 6 columns.</div></div>
+    <div class="code-wrap"><div class="code-header"><span>Cell 2 — Load Dataset</span><button class="btn-copy" onclick="copyCode('code-c2',this)">📋 Copy Code</button></div><pre id="code-c2"># CELL 2 — Load the dataset
+df = pd.read_csv("plant_simple.csv")
+print("First 5 rows:")
+print(df.head())
+print(f"\nDataset size: {df.shape[0]} rows, {df.shape[1]} columns")
+print("\nColumn types:")
+print(df.dtypes)
+print("\nMissing values per column:")
+print(df.isnull().sum())</pre></div>
+  </div>
+
+  <div class="cell-panel" id="cp-c3">
+    <div class="callout callout-tip" style="margin-bottom:.75rem"><div class="callout-icon">💡</div><div>This compares plant height between <strong>Control</strong> and <strong>High Fertilizer</strong> groups. Look for the p-value — is it less than 0.05?</div></div>
+    <div class="code-wrap"><div class="code-header"><span>Cell 3 — Independent Samples t-test</span><button class="btn-copy" onclick="copyCode('code-c3',this)">📋 Copy Code</button></div><pre id="code-c3"># CELL 3 — Independent samples t-test
+# Question: Is plant height different between Control and High Fertilizer?
+
+group_control = df[df["Treatment"] == "Control"]["Plant_Height_cm"]
+group_high    = df[df["Treatment"] == "High Fertilizer"]["Plant_Height_cm"]
+
+print(f"Mean — Control       : {group_control.mean():.2f} cm")
+print(f"Mean — High Fertilizer: {group_high.mean():.2f} cm")
+
+t_stat, p_value = ttest_ind(group_control, group_high)
+print(f"\nt-statistic : {t_stat:.4f}")
+print(f"p-value     : {p_value:.4f}")
+
+if p_value &lt; 0.05:
+    print("\n✅ SIGNIFICANT — There IS a difference between the two groups.")
+else:
+    print("\n❌ NOT SIGNIFICANT — There is NO clear difference.")</pre></div>
+  </div>
+
+  <div class="cell-panel" id="cp-c4">
+    <div class="callout callout-warn" style="margin-bottom:.75rem"><div class="callout-icon">⚠</div><div>ANOVA tests all 3 groups at once. If p &lt; 0.05, run a post-hoc test to find WHICH groups differ. Ask Gemini AI: "How do I run Tukey's HSD in Python?"</div></div>
+    <div class="code-wrap"><div class="code-header"><span>Cell 4 — One-Way ANOVA</span><button class="btn-copy" onclick="copyCode('code-c4',this)">📋 Copy Code</button></div><pre id="code-c4"># CELL 4 — One-Way ANOVA
+# Question: Does fertilizer level affect plant height?
+
+control   = df[df["Treatment"] == "Control"]["Plant_Height_cm"]
+low_fert  = df[df["Treatment"] == "Low Fertilizer"]["Plant_Height_cm"]
+high_fert = df[df["Treatment"] == "High Fertilizer"]["Plant_Height_cm"]
+
+print(f"Mean — Control        : {control.mean():.2f} cm")
+print(f"Mean — Low Fertilizer : {low_fert.mean():.2f} cm")
+print(f"Mean — High Fertilizer: {high_fert.mean():.2f} cm")
+
+f_stat, p_value = f_oneway(control, low_fert, high_fert)
+print(f"\nF-statistic : {f_stat:.4f}")
+print(f"p-value     : {p_value:.4f}")
+
+if p_value &lt; 0.05:
+    print("\n✅ SIGNIFICANT — At least one group is different!")
+    print("   Run a post-hoc test to find out WHICH groups differ.")
+else:
+    print("\n❌ NOT SIGNIFICANT — No clear difference across groups.")</pre></div>
+  </div>
+
+  <div class="cell-panel" id="cp-c5">
+    <div class="callout callout-ai" style="margin-bottom:.75rem"><div class="callout-icon">🤖</div><div>This checks if taller plants also weigh more. Remember: correlation ≠ causation!</div></div>
+    <div class="code-wrap"><div class="code-header"><span>Cell 5 — Pearson Correlation</span><button class="btn-copy" onclick="copyCode('code-c5',this)">📋 Copy Code</button></div><pre id="code-c5"># CELL 5 — Pearson Correlation
+# Question: Do taller plants also weigh more?
+
+r, p_value = pearsonr(df["Plant_Height_cm"], df["Fresh_Weight_g"])
+
+print(f"Pearson r : {r:.4f}")
+print(f"p-value   : {p_value:.4f}")
+
+if p_value &lt; 0.05:
+    direction = "positive" if r > 0 else "negative"
+    strength  = "strong" if abs(r) > 0.7 else ("moderate" if abs(r) > 0.4 else "weak")
+    print(f"\n✅ SIGNIFICANT — {strength} {direction} correlation.")
+else:
+    print("\n❌ NOT SIGNIFICANT — No clear relationship found.")</pre></div>
+  </div>
+
+  <div class="cell-panel" id="cp-c6">
+    <div class="callout callout-note" style="margin-bottom:.75rem"><div class="callout-icon">📌</div><div>The contingency table shows the COUNT of plants in each combination (e.g. how many Control plants germinated). Chi-square tests if these counts are what we would expect if there was NO relationship.</div></div>
+    <div class="code-wrap"><div class="code-header"><span>Cell 6 — Chi-Square Test</span><button class="btn-copy" onclick="copyCode('code-c6',this)">📋 Copy Code</button></div><pre id="code-c6"># CELL 6 — Chi-Square Test of Independence
+# Question: Is germination outcome linked to treatment group?
+
+ct = pd.crosstab(df["Treatment"], df["Germination"])
+print("Contingency Table:")
+print(ct)
+
+chi2, p_value, dof, expected = chi2_contingency(ct)
+print(f"\nChi-square value   : {chi2:.4f}")
+print(f"Degrees of freedom : {dof}")
+print(f"p-value            : {p_value:.4f}")
+
+if p_value &lt; 0.05:
+    print("\n✅ SIGNIFICANT — Treatment and Germination ARE related!")
+else:
+    print("\n❌ NOT SIGNIFICANT — No significant association found.")</pre></div>
+  </div>
+
+  <div class="cell-panel" id="cp-c7">
+    <div class="callout callout-tip" style="margin-bottom:.75rem"><div class="callout-icon">💡</div><div>Run this cell <strong>after Cell 4</strong> to see all 3 plots at once. Great for putting in your FYP!</div></div>
+    <div class="code-wrap"><div class="code-header"><span>Cell 7 — Visualise Everything</span><button class="btn-copy" onclick="copyCode('code-c7',this)">📋 Copy Code</button></div><pre id="code-c7"># CELL 7 — Visualise all results
+fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+
+# Chart 1: Boxplot — height by treatment
+df.boxplot(column="Plant_Height_cm", by="Treatment", ax=axes[0])
+axes[0].set_title("Height by Treatment")
+axes[0].set_xlabel("")
+
+# Chart 2: Scatter — height vs weight
+axes[1].scatter(df["Plant_Height_cm"], df["Fresh_Weight_g"], alpha=0.5, color="steelblue")
+axes[1].set_xlabel("Height (cm)")
+axes[1].set_ylabel("Weight (g)")
+axes[1].set_title("Height vs Fresh Weight")
+
+# Chart 3: Stacked bar — germination rate
+ct_pct = pd.crosstab(df["Treatment"], df["Germination"])
+ct_pct.div(ct_pct.sum(axis=1), axis=0).plot(kind="bar", stacked=True, ax=axes[2])
+axes[2].set_title("Germination Rate")
+axes[2].set_xlabel("")
+axes[2].tick_params(axis="x", rotation=0)
+
+plt.suptitle("Plant Growth Experiment — Summary Charts", y=1.02)
+plt.tight_layout()
+plt.show()</pre></div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 8 — GEMINI AI PROMPTS
+════════════════════════════════════════ -->
+<section id="sec-gemini" class="section">
+<div class="container">
+  <div class="section-hero" style="background:linear-gradient(135deg,#3b0764,#6941c6,#8b5cf6)">
+    <h2>🤖 Gemini AI Prompt Helper</h2>
+    <p>Ready-to-use prompts for every stage of your analysis. Copy, fill in your details, and paste into Gemini AI.</p>
+  </div>
+
+  <div class="callout callout-ai">
+    <div class="callout-icon">🤖</div>
+    <div>Open <a href="https://gemini.google.com" target="_blank" style="color:var(--purple);font-weight:700">gemini.google.com</a> in another tab. Copy a prompt below, fill in the <span class="fillable">[brackets]</span>, and paste it into Gemini.</div>
+  </div>
+
+  <div class="prompt-grid">
+    <div class="prompt-card">
+      <div class="prompt-card-head">🔬 Choosing a Test</div>
+      <div class="prompt-card-body">
+        <div class="prompt-text">I have <span class="fillable">[number]</span> treatment groups and I measure <span class="fillable">[dependent variable name]</span>. Which statistical test should I use and why? Explain simply for a Plant Science student.</div>
+        <button class="btn-copy" onclick="copyText('I have [number] treatment groups and I measure [dependent variable name]. Which statistical test should I use and why? Explain simply for a Plant Science student.',this)">📋 Copy Prompt</button>
+      </div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-card-head">📊 Understanding p-value</div>
+      <div class="prompt-card-body">
+        <div class="prompt-text">My p-value is <span class="fillable">[insert p-value]</span>. What does this mean? Is it significant? Explain in simple language for a first-year Plant Science student.</div>
+        <button class="btn-copy" onclick="copyText('My p-value is [insert p-value]. What does this mean? Is it significant? Explain in simple language for a first-year Plant Science student.',this)">📋 Copy Prompt</button>
+      </div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-card-head">🖥 Explaining Output</div>
+      <div class="prompt-card-body">
+        <div class="prompt-text">Here is my statistical output from Python: <span class="fillable">[paste output]</span>. Explain what each number means and help me interpret the result in simple language.</div>
+        <button class="btn-copy" onclick="copyText('Here is my statistical output from Python: [paste output]. Explain what each number means and help me interpret the result in simple language.',this)">📋 Copy Prompt</button>
+      </div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-card-head">🐛 Debugging Colab</div>
+      <div class="prompt-card-body">
+        <div class="prompt-text">I got this error in Google Colab: <span class="fillable">[paste error]</span>. Explain what it means and how to fix it step by step.</div>
+        <button class="btn-copy" onclick="copyText('I got this error in Google Colab: [paste error]. Explain what it means and how to fix it step by step.',this)">📋 Copy Prompt</button>
+      </div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-card-head">✍ Writing Result Sentence</div>
+      <div class="prompt-card-body">
+        <div class="prompt-text">Help me write a result sentence for my FYP based on this output: <span class="fillable">[paste output]</span>. My research question is: <span class="fillable">[insert question]</span>.</div>
+        <button class="btn-copy" onclick="copyText('Help me write a result sentence for my FYP based on this output: [paste output]. My research question is: [insert question].',this)">📋 Copy Prompt</button>
+      </div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-card-head">✅ Checking My Test Choice</div>
+      <div class="prompt-card-body">
+        <div class="prompt-text">I want to use <span class="fillable">[test name]</span> for my data. My IV is <span class="fillable">[IV]</span> and my DV is <span class="fillable">[DV]</span>. Is this test suitable? Explain why or why not.</div>
+        <button class="btn-copy" onclick="copyText('I want to use [test name] for my data. My IV is [IV] and my DV is [DV]. Is this test suitable? Explain why or why not.',this)">📋 Copy Prompt</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-purple" style="margin-top:1.5rem">
+    <h3 class="card-title">🤖 How to Use a Gemini Prompt</h3>
+    <div class="step-flow">
+      <div class="step-item">
+        <div class="step-num" style="background:var(--purple)">1</div>
+        <div class="step-text"><b>Open Gemini AI</b><span>Go to gemini.google.com — sign in with your Google account</span></div>
+      </div>
+      <div class="arrow-down">▼</div>
+      <div class="step-item">
+        <div class="step-num" style="background:var(--purple)">2</div>
+        <div class="step-text"><b>Copy &amp; Fill the Prompt</b><span>Replace the <strong>[brackets]</strong> with your actual values before sending</span></div>
+      </div>
+      <div class="arrow-down">▼</div>
+      <div class="step-item">
+        <div class="step-num" style="background:var(--purple)">3</div>
+        <div class="step-text"><b>Read the Response</b><span>Does it make sense? Does it match what your code output shows?</span></div>
+      </div>
+      <div class="arrow-down">▼</div>
+      <div class="step-item">
+        <div class="step-num" style="background:var(--purple)">4</div>
+        <div class="step-text"><b>Verify with Your Supervisor</b><span>Never submit AI-written text without checking it yourself first</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 9 — RESULT SENTENCE BUILDER
+════════════════════════════════════════ -->
+<section id="sec-builder" class="section">
+<div class="container">
+  <div class="section-hero">
+    <h2>✍ Result Sentence Builder</h2>
+    <p>Fill in the form below to generate a ready-to-use result sentence for your FYP report.</p>
+  </div>
+
+  <div class="builder-form">
+    <div class="form-group">
+      <label>1. Which statistical test did you use?</label>
+      <select class="form-control" id="bl-test" onchange="builderUpdate()">
+        <option value="">-- Select a test --</option>
+        <option value="ttest">Independent Samples t-test</option>
+        <option value="anova">One-Way ANOVA</option>
+        <option value="corr">Pearson Correlation</option>
+        <option value="chisq">Chi-Square Test</option>
+      </select>
+    </div>
+    <div id="bl-fields"></div>
+    <button class="btn btn-primary" onclick="generateSentence()" style="margin-top:.5rem">✨ Generate Result Sentence</button>
+    <div class="builder-output" id="builder-output">
+      <div class="out-label">Your Result Sentence:</div>
+      <div id="generated-sentence"></div>
+      <button class="btn-copy" onclick="copyText(document.getElementById('generated-sentence').innerText,this)">📋 Copy Sentence</button>
+      <div style="margin-top:.75rem;font-size:.8rem;color:var(--gray-500)">
+        ⚠ Always review and edit this sentence before submitting it in your FYP.
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 10 — RESPONSIBLE AI
+════════════════════════════════════════ -->
+<section id="sec-ai" class="section">
+<div class="container">
+  <div class="section-hero" style="background:linear-gradient(135deg,#4c1d95,#6941c6,#7c3aed)">
+    <h2>🛡 Use AI Responsibly</h2>
+    <p>AI tools are powerful study assistants — but you are still responsible for your own work.</p>
+  </div>
+
+  <div class="ai-split">
+    <div class="ai-col can">
+      <div class="ai-col-head">✅ AI CAN help you…</div>
+      <div class="ai-col-body">
+        <div class="ai-item"><span>🔢</span>Explain what a p-value means</div>
+        <div class="ai-item"><span>🧪</span>Suggest possible statistical tests</div>
+        <div class="ai-item"><span>🐛</span>Debug Python errors in Colab</div>
+        <div class="ai-item"><span>✍</span>Draft result sentences</div>
+        <div class="ai-item"><span>📖</span>Translate statistics jargon to simple English</div>
+      </div>
+    </div>
+    <div class="ai-col cannot">
+      <div class="ai-col-head">❌ AI CANNOT replace…</div>
+      <div class="ai-col-body">
+        <div class="ai-item"><span>🧠</span>Your understanding of your own research</div>
+        <div class="ai-item"><span>⚖</span>Your judgment about your research design</div>
+        <div class="ai-item"><span>📋</span>Checking that your data is correct</div>
+        <div class="ai-item"><span>💡</span>Your critical thinking and honesty</div>
+        <div class="ai-item"><span>👩‍🏫</span>Verification by your supervisor</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="title" style="margin-top:1.5rem;margin-bottom:.75rem">The 5 Rules of Responsible AI Use</h2>
+  <div class="rule-steps">
+    <div class="rule-step"><div class="rule-num">1</div><div><b>Understand Before You Copy</b><span>Never copy AI text into your report without reading and understanding it first.</span></div></div>
+    <div class="rule-step"><div class="rule-num">2</div><div><b>Protect Your Data</b><span>Do not upload sensitive or unpublished research data to public AI platforms.</span></div></div>
+    <div class="rule-step"><div class="rule-num">3</div><div><b>Acknowledge AI Use</b><span>If your university requires it, declare that you used AI assistance in your report.</span></div></div>
+    <div class="rule-step"><div class="rule-num">4</div><div><b>Verify Every Result</b><span>AI can make mistakes. Always cross-check results with your textbook or supervisor.</span></div></div>
+    <div class="rule-step"><div class="rule-num">5</div><div><b>You Are the Scientist</b><span>AI helps you do science — it does not do science for you. Your thinking matters.</span></div></div>
+  </div>
+
+  <div class="callout callout-warn" style="margin-top:1rem">
+    <div class="callout-icon">⚠</div>
+    <div><strong>IIUM Policy Reminder:</strong> Check with your supervisor and follow your department's guidelines on AI use in academic work. Acknowledge AI assistance where required by your university policy.</div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  SECTION 11 — QUICK REFERENCE
+════════════════════════════════════════ -->
+<section id="sec-ref" class="section">
+<div class="container">
+  <div class="section-hero">
+    <h2>⚡ Quick Reference Card</h2>
+    <p>Everything you need on one page. Bookmark this section and refer to it during your FYP.</p>
+  </div>
+
+  <div class="qref-grid">
+    <div class="qref-card test">
+      <div class="qref-head">🔑 Choose Your Test</div>
+      <div class="qref-body">
+        <div class="qref-item"><span class="qref-arrow">→</span><span>2 groups + numerical DV</span><span style="margin-left:auto"><strong>t-test</strong></span></div>
+        <div class="qref-item"><span class="qref-arrow">→</span><span>3+ groups + numerical DV</span><span style="margin-left:auto"><strong>ANOVA</strong></span></div>
+        <div class="qref-item"><span class="qref-arrow">→</span><span>2 numerical variables</span><span style="margin-left:auto"><strong>Correlation</strong></span></div>
+        <div class="qref-item"><span class="qref-arrow">→</span><span>2 categorical variables</span><span style="margin-left:auto"><strong>Chi-square</strong></span></div>
+      </div>
+    </div>
+    <div class="qref-card pval">
+      <div class="qref-head">📊 Read the p-value</div>
+      <div class="qref-body">
+        <div class="qref-item"><span style="font-family:var(--font-mono);font-weight:700;color:var(--green)">p &lt; 0.05</span><span style="margin-left:.5rem">✅ Significant (real result)</span></div>
+        <div class="qref-item"><span style="font-family:var(--font-mono);font-weight:700;color:var(--red)">p ≥ 0.05</span><span style="margin-left:.5rem">❌ Not significant</span></div>
+        <div class="qref-item" style="font-size:.8rem;color:var(--gray-500)">Always report the actual number (e.g. p = 0.023)</div>
+      </div>
+    </div>
+    <div class="qref-card ai-prompts">
+      <div class="qref-head">🤖 Gemini AI Prompts</div>
+      <div class="qref-body">
+        <div class="qref-item" style="font-size:.8rem;font-style:italic">"Which test should I use for [describe data]?"</div>
+        <div class="qref-item" style="font-size:.8rem;font-style:italic">"Explain this output: [paste output]"</div>
+        <div class="qref-item" style="font-size:.8rem;font-style:italic">"Fix this Colab error: [paste error]"</div>
+        <div class="qref-item" style="font-size:.8rem;font-style:italic">"Write a result sentence: [paste output]"</div>
+      </div>
+    </div>
+    <div class="qref-card responsible">
+      <div class="qref-head">⚠ Responsible AI</div>
+      <div class="qref-body">
+        <div class="qref-item"><span>✔</span>Understand before copying AI text</div>
+        <div class="qref-item"><span>✔</span>Verify results with your supervisor</div>
+        <div class="qref-item"><span>✔</span>Do not upload private research data</div>
+        <div class="qref-item"><span>✔</span>Acknowledge AI use if required</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.25rem">
+    <h3 class="card-title">📊 All 4 Tests Summary</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Test</th><th>IV Type</th><th>DV Type</th><th>Groups</th><th>Key Output</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Independent t-test</strong></td><td>Categorical</td><td>Numerical</td><td>2</td><td>t, df, p-value</td></tr>
+        <tr><td><strong>One-Way ANOVA</strong></td><td>Categorical</td><td>Numerical</td><td>3+</td><td>F, df1, df2, p-value</td></tr>
+        <tr><td><strong>Pearson Correlation</strong></td><td>Numerical</td><td>Numerical</td><td>N/A</td><td>r, p-value</td></tr>
+        <tr><td><strong>Chi-Square Test</strong></td><td>Categorical</td><td>Categorical</td><td>N/A</td><td>χ², df, p-value</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="footer-strip">
+    Google Colab: <a href="https://colab.research.google.com" target="_blank">colab.research.google.com</a> &nbsp;|&nbsp;
+    Gemini AI: <a href="https://gemini.google.com" target="_blank">gemini.google.com</a> &nbsp;|&nbsp;
+    Dataset: plant_simple.csv &nbsp;|&nbsp;
+    Materials: <a href="https://github.com/HafizahBaha/statisticsgeminiai" target="_blank">github.com/HafizahBaha/statisticsgeminiai</a>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════════════════════════════
+  JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+// ── Navigation ───────────────────────────────
+function showSection(id, btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Toast ─────────────────────────────────────
+function showToast(msg='✅ Copied!'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── Copy helpers ──────────────────────────────
+function copyText(text,btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    if(btn){btn.classList.add('copied');btn.textContent='✅ Copied!';
+      setTimeout(()=>{btn.classList.remove('copied');btn.textContent='📋 Copy'},2000);}
+    showToast();
+  });
+}
+function copyCode(id,btn){
+  const code=document.getElementById(id).textContent;
+  // decode HTML entities for copy
+  const txt=code.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+  copyText(txt,btn);
+}
+
+// ── Test Finder ───────────────────────────────
+let finderState={dvType:null};
+
+function finderNext(step,choice){
+  // Hide all steps and results
+  document.querySelectorAll('.finder-step,.finder-result').forEach(el=>{
+    el.classList.remove('active');
+  });
+  // Update progress
+  const dots=[document.getElementById('pd1'),document.getElementById('pd2'),document.getElementById('pd3')];
+  dots.forEach((d,i)=>{ d.classList.remove('active','done'); });
+
+  if(step===1){
+    finderState.dvType=choice;
+    dots[0].classList.add('done');dots[1].classList.add('active');
+    if(choice==='numerical'){
+      document.getElementById('fs2a').classList.add('active');
+    } else {
+      document.getElementById('fs2b').classList.add('active');
+    }
+  } else if(step===2){
+    dots[0].classList.add('done');dots[1].classList.add('done');dots[2].classList.add('active');
+    const map={ttest:'fr-ttest',anova:'fr-anova',corr:'fr-corr',chisq:'fr-chisq'};
+    document.getElementById(map[choice]).classList.add('active');
+  }
+}
+
+function resetFinder(){
+  document.querySelectorAll('.finder-step,.finder-result').forEach(el=>el.classList.remove('active'));
+  document.getElementById('fs1').classList.add('active');
+  ['pd1','pd2','pd3'].forEach((id,i)=>{
+    const d=document.getElementById(id);
+    d.classList.remove('done');
+    if(i===0) d.classList.add('active'); else d.classList.remove('active');
+  });
+  finderState={dvType:null};
+}
+
+// ── Test tabs ─────────────────────────────────
+function setTestTab(id){
+  document.querySelectorAll('.test-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.test-panel').forEach(p=>p.classList.remove('active'));
+  const tabs={'ttest':0,'anova':1,'corr':2,'chisq':3};
+  document.querySelectorAll('.test-tab')[tabs[id]].classList.add('active');
+  document.getElementById('tp-'+id).classList.add('active');
+  showSection('sec-tests',null);
+}
+
+// ── Colab cell tabs ────────────────────────────
+function setCell(id){
+  document.querySelectorAll('.cell-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.cell-panel').forEach(p=>p.classList.remove('active'));
+  const map={c1:0,c2:1,c3:2,c4:3,c5:4,c6:5,c7:6};
+  document.querySelectorAll('.cell-tab')[map[id]].classList.add('active');
+  document.getElementById('cp-'+id).classList.add('active');
+}
+
+// ── p-value interpreter ───────────────────────
+function interpretPval(){
+  const val=parseFloat(document.getElementById('pval-in').value);
+  const zone=document.getElementById('pval-result-zone');
+  if(isNaN(val)||val<0||val>1){
+    zone.innerHTML='<div style="text-align:center;color:var(--gray-400);padding:2rem;font-size:.9rem">⚠ Please enter a valid number between 0 and 1</div>';
+    return;
+  }
+  const sig=val<0.05;
+  let strength='';
+  if(val<0.001) strength='Very strong evidence';
+  else if(val<0.01) strength='Strong evidence';
+  else if(val<0.05) strength='Significant evidence';
+  else if(val<0.1) strength='Borderline — not quite significant';
+  else strength='No significant evidence';
+
+  zone.innerHTML=`<div class="pval-sig ${sig?'significant':'not-significant'}">
+    <div class="pval-verdict">${sig?'✅ Statistically Significant':'❌ Not Statistically Significant'}</div>
+    <div class="pval-detail"><strong>p = ${val.toFixed(4)}</strong> &nbsp;${sig?'< 0.05':'≥ 0.05'}</div>
+    <div class="pval-detail" style="margin:.5rem 0">${sig
+      ? 'The result is <strong>unlikely to be due to random chance</strong>. There appears to be a real difference or relationship in your data.'
+      : 'There is <strong>not enough evidence</strong> to conclude there is a real difference or relationship. This could be due to chance.'}</div>
+    <div class="pval-detail">${strength}</div>
+    <div class="pval-null">${sig?'Reject the null hypothesis':'Fail to reject the null hypothesis'}</div>
+    <div class="pval-warn-box" style="margin-top:1rem">
+      ⚠ <strong>Remember:</strong> Significant does not always mean important. Always think about the biological meaning of your result.
+    </div>
+  </div>`;
+}
+
+// ── Result Sentence Builder ───────────────────
+const builderFields={
+  ttest:[
+    {id:'bl-groupA',label:'Group A name (e.g. Control)',placeholder:'Control'},
+    {id:'bl-groupB',label:'Group B name (e.g. High Fertilizer)',placeholder:'High Fertilizer'},
+    {id:'bl-dv-t',label:'Dependent variable (e.g. plant height)',placeholder:'plant height'},
+    {id:'bl-meanA',label:'Mean of Group A (cm or g)',placeholder:'e.g. 17.8'},
+    {id:'bl-meanB',label:'Mean of Group B (cm or g)',placeholder:'e.g. 29.4'},
+    {id:'bl-t',label:'t-statistic',placeholder:'e.g. -5.23'},
+    {id:'bl-df-t',label:'Degrees of freedom (df)',placeholder:'e.g. 38'},
+    {id:'bl-p-t',label:'p-value',placeholder:'e.g. 0.001'},
+  ],
+  anova:[
+    {id:'bl-groups-a',label:'List all groups (comma separated)',placeholder:'Control, Low Fertilizer, High Fertilizer'},
+    {id:'bl-dv-a',label:'Dependent variable',placeholder:'plant height'},
+    {id:'bl-iv-a',label:'Independent variable',placeholder:'fertilizer level'},
+    {id:'bl-F',label:'F-statistic',placeholder:'e.g. 18.45'},
+    {id:'bl-df1',label:'df1 (between groups)',placeholder:'e.g. 2'},
+    {id:'bl-df2',label:'df2 (within groups)',placeholder:'e.g. 57'},
+    {id:'bl-p-a',label:'p-value',placeholder:'e.g. 0.000'},
+  ],
+  corr:[
+    {id:'bl-v1',label:'Variable 1',placeholder:'plant height'},
+    {id:'bl-v2',label:'Variable 2',placeholder:'fresh weight'},
+    {id:'bl-r',label:'Pearson r value',placeholder:'e.g. 0.78'},
+    {id:'bl-p-c',label:'p-value',placeholder:'e.g. 0.001'},
+    {id:'bl-dir',label:'Direction',placeholder:'positive or negative'},
+  ],
+  chisq:[
+    {id:'bl-cat1',label:'Variable 1 (categorical)',placeholder:'treatment group'},
+    {id:'bl-cat2',label:'Variable 2 (categorical)',placeholder:'germination outcome'},
+    {id:'bl-chi2',label:'Chi-square value',placeholder:'e.g. 4.32'},
+    {id:'bl-df-c',label:'Degrees of freedom',placeholder:'e.g. 2'},
+    {id:'bl-p-x',label:'p-value',placeholder:'e.g. 0.012'},
+  ],
+};
+
+function builderUpdate(){
+  const test=document.getElementById('bl-test').value;
+  const container=document.getElementById('bl-fields');
+  container.innerHTML='';
+  document.getElementById('builder-output').classList.remove('show');
+  if(!test) return;
+  const fields=builderFields[test];
+  const grid=document.createElement('div');
+  grid.className='grid-2';grid.style.margin='.75rem 0';
+  fields.forEach(f=>{
+    const div=document.createElement('div');div.className='form-group';
+    div.innerHTML=`<label>${f.label}</label><input class="form-control" id="${f.id}" placeholder="${f.placeholder}"/>`;
+    grid.appendChild(div);
+  });
+  container.appendChild(grid);
+}
+
+function generateSentence(){
+  const test=document.getElementById('bl-test').value;
+  if(!test){alert('Please select a test first.');return;}
+  const g=id=>{ const el=document.getElementById(id); return el?el.value||el.placeholder:'___'; };
+  let sentence='';
+  if(test==='ttest'){
+    const sig=parseFloat(g('bl-p-t'))<0.05;
+    sentence=`An independent samples t-test was conducted to compare ${g('bl-dv-t')} between the ${g('bl-groupA')} (M = ${g('bl-meanA')}) and ${g('bl-groupB')} (M = ${g('bl-meanB')}) groups. The result showed a statistically ${sig?'significant':'non-significant'} difference, t(${g('bl-df-t')}) = ${g('bl-t')}, p = ${g('bl-p-t')}. ${sig?`The ${g('bl-groupB')} group had a higher mean ${g('bl-dv-t')} compared to ${g('bl-groupA')}.`:'There was no clear difference between the two groups.'}`;
+  } else if(test==='anova'){
+    const sig=parseFloat(g('bl-p-a'))<0.05;
+    sentence=`A one-way ANOVA was conducted to compare ${g('bl-dv-a')} across ${g('bl-groups-a')}. The analysis revealed a statistically ${sig?'significant':'non-significant'} effect of ${g('bl-iv-a')} on ${g('bl-dv-a')}, F(${g('bl-df1')}, ${g('bl-df2')}) = ${g('bl-F')}, p = ${g('bl-p-a')}. ${sig?'Post-hoc tests (Tukey HSD) were conducted to identify which specific groups differed significantly.':'No significant difference was found across the treatment groups.'}`;
+  } else if(test==='corr'){
+    const r=parseFloat(g('bl-r'));const sig=parseFloat(g('bl-p-c'))<0.05;
+    const strength=Math.abs(r)>0.7?'strong':Math.abs(r)>0.4?'moderate':'weak';
+    const dir=g('bl-dir').toLowerCase().includes('neg')?'negative':'positive';
+    sentence=`A Pearson correlation was conducted to examine the relationship between ${g('bl-v1')} and ${g('bl-v2')}. There was a statistically ${sig?'significant':'non-significant'} ${strength} ${dir} correlation between the two variables, r = ${g('bl-r')}, p = ${g('bl-p-c')}. ${sig?`This indicates that as ${g('bl-v1')} increased, ${g('bl-v2')} tended to ${dir==='positive'?'increase':'decrease'}.`:'No significant linear relationship was found between the two variables.'}`;
+  } else if(test==='chisq'){
+    const sig=parseFloat(g('bl-p-x'))<0.05;
+    sentence=`A chi-square test of independence was conducted to determine whether ${g('bl-cat1')} and ${g('bl-cat2')} were significantly associated. The result was statistically ${sig?'significant':'non-significant'}, χ²(${g('bl-df-c')}) = ${g('bl-chi2')}, p = ${g('bl-p-x')}. ${sig?`This indicates that ${g('bl-cat1')} significantly influenced ${g('bl-cat2')}.`:'There was no significant association between the two variables.'}`;
+  }
+  document.getElementById('generated-sentence').textContent=sentence;
+  document.getElementById('builder-output').classList.add('show');
+  document.getElementById('builder-output').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── Keyboard nav for flashcards ───────────────
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.flashcard.flipped').forEach(c=>c.classList.remove('flipped'));
+    closeDrawer();
+  }
+});
+
+// ════════════════════════════════════════════════
+// PROGRESS TRACKER
+// ════════════════════════════════════════════════
+
+const SECTIONS = [
+  { id:'sec-welcome',  label:'Welcome',          icon:'🌱', desc:'App introduction & overview' },
+  { id:'sec-vocab',    label:'Key Words',         icon:'📚', desc:'Statistics vocabulary flashcards' },
+  { id:'sec-dataset',  label:'Meet the Dataset',  icon:'📂', desc:'Explore plant_simple.csv' },
+  { id:'sec-finder',   label:'Test Finder',       icon:'🔍', desc:'Interactive test decision tool' },
+  { id:'sec-tests',    label:'Learn the Tests',   icon:'🧪', desc:'t-test, ANOVA, Correlation, Chi-square' },
+  { id:'sec-pval',     label:'p-value',           icon:'📉', desc:'Interpret any p-value' },
+  { id:'sec-colab',    label:'Google Colab',      icon:'💻', desc:'Copy-ready Python code' },
+  { id:'sec-gemini',   label:'Gemini AI Prompts', icon:'🤖', desc:'Ready-to-use AI prompts' },
+  { id:'sec-builder',  label:'Result Builder',    icon:'✍',  desc:'Generate your result sentence' },
+  { id:'sec-ai',       label:'Responsible AI',    icon:'🛡',  desc:'Ethical AI use guidelines' },
+];
+// Quick Ref is a bonus — not counted in the 10 required
+const BONUS = { id:'sec-ref', label:'Quick Reference', icon:'⚡', desc:'One-page summary card' };
+
+const STORAGE_KEY = 'plantstats_progress';
+let drawerOpen = false;
+
+// Load state from localStorage
+function loadState(){
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch(e){ return {}; }
+}
+function saveState(state){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+}
+
+// Build the drawer list
+function buildList(){
+  const state = loadState();
+  const list  = document.getElementById('prog-list');
+  list.innerHTML = '';
+  const allItems = [...SECTIONS, BONUS];
+  allItems.forEach(sec => {
+    const s = state[sec.id] || {};
+    const isDone    = s.ticked  === true;
+    const isVisited = s.visited === true;
+    const item = document.createElement('div');
+    item.className = 'prog-item' + (isDone ? ' done' : isVisited ? ' auto-visited' : '');
+    item.dataset.id = sec.id;
+    item.innerHTML = `
+      <div class="prog-check">${isDone ? '✓' : isVisited ? '👁' : ''}</div>
+      <div class="prog-item-info">
+        <div class="prog-item-name">${sec.icon} ${sec.label}</div>
+        <div class="prog-item-status">${isDone ? 'Completed ✓' : isVisited ? 'Visited — tap to mark done' : 'Not yet visited'}</div>
+      </div>
+      <button class="prog-nav-btn" title="Go to section" onclick="goToSection('${sec.id}',event)">→</button>
+    `;
+    // Clicking the row toggles ticked state
+    item.addEventListener('click', (e) => {
+      if(e.target.classList.contains('prog-nav-btn')) return;
+      toggleTick(sec.id);
+    });
+    list.appendChild(item);
+  });
+  updateBar();
+}
+
+// Toggle manual tick
+function toggleTick(sectionId){
+  const state = loadState();
+  if(!state[sectionId]) state[sectionId] = {};
+  state[sectionId].ticked = !state[sectionId].ticked;
+  // If un-ticking, keep visited status
+  saveState(state);
+  buildList();
+  updateNavBadges();
+  // Confetti if just completed all
+  const done = SECTIONS.filter(s => (state[s.id]||{}).ticked).length;
+  if(done === SECTIONS.length) celebrate();
+}
+
+// Mark section as visited (called automatically when nav changes)
+function markVisited(sectionId){
+  const state = loadState();
+  if(!state[sectionId]) state[sectionId] = {};
+  if(!state[sectionId].visited){
+    state[sectionId].visited = true;
+    saveState(state);
+    buildList();
+    updateNavBadges();
+  }
+}
+
+// Update the progress bar and count
+function updateBar(){
+  const state = loadState();
+  const total  = SECTIONS.length; // 10 required sections
+  const done   = SECTIONS.filter(s => (state[s.id]||{}).ticked).length;
+  const pct    = Math.round((done / total) * 100);
+  document.getElementById('prog-bar-fill').style.width = pct + '%';
+  document.getElementById('prog-count-label').textContent = `${done} of ${total} completed`;
+  document.getElementById('prog-pct-label').textContent   = pct + '%';
+  document.getElementById('prog-badge').textContent = done;
+  const msg = document.getElementById('prog-complete-msg');
+  if(done === total) msg.classList.add('show'); else msg.classList.remove('show');
+}
+
+// Add ✓ badge to nav buttons for visited sections
+function updateNavBadges(){
+  const state = loadState();
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    const onclick = btn.getAttribute('onclick') || '';
+    const match   = onclick.match(/showSection\('([^']+)'/);
+    if(!match) return;
+    const sid = match[1];
+    let nb = btn.querySelector('.nb');
+    if(!nb){
+      nb = document.createElement('span');
+      nb.className = 'nb';
+      btn.appendChild(nb);
+    }
+    const s = state[sid] || {};
+    if(s.ticked){
+      nb.textContent = '✓';
+      nb.classList.add('show');
+      nb.style.background = 'var(--green)';
+    } else if(s.visited){
+      nb.textContent = '·';
+      nb.classList.add('show');
+      nb.style.background = 'var(--teal)';
+    } else {
+      nb.classList.remove('show');
+    }
+  });
+}
+
+// Navigate to a section from within the drawer
+function goToSection(sectionId, e){
+  e.stopPropagation();
+  closeDrawer();
+  // find and click the matching nav button
+  const navBtns = document.querySelectorAll('.nav-btn');
+  let found = false;
+  navBtns.forEach(btn => {
+    const oc = btn.getAttribute('onclick') || '';
+    if(oc.includes(`'${sectionId}'`)){
+      btn.click();
+      found = true;
+    }
+  });
+  if(!found) showSection(sectionId, null);
+}
+
+// Open / close drawer
+function toggleDrawer(){
+  drawerOpen = !drawerOpen;
+  const drawer = document.getElementById('prog-drawer');
+  if(drawerOpen){
+    buildList();
+    drawer.classList.add('open');
+  } else {
+    drawer.classList.remove('open');
+  }
+}
+function closeDrawer(){
+  drawerOpen = false;
+  document.getElementById('prog-drawer').classList.remove('open');
+}
+
+// Reset all progress
+function resetProgress(){
+  if(!confirm('Reset all progress? This cannot be undone.')) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  buildList();
+  updateNavBadges();
+}
+
+// Simple confetti burst on 100%
+function celebrate(){
+  const colours = ['#0d6e6e','#2d7d46','#4aab6a','#6941c6','#d97706','#86efac'];
+  for(let i = 0; i < 30; i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `
+      left:${Math.random()*100}vw;
+      top:${Math.random()*40 + 10}vh;
+      background:${colours[Math.floor(Math.random()*colours.length)]};
+      animation-delay:${Math.random()*.5}s;
+      animation-duration:${.6+Math.random()*.6}s;
+      transform:rotate(${Math.random()*360}deg);
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 1500);
+  }
+  showToast('🎉 All sections completed!');
+}
+
+// Close drawer when clicking outside
+document.addEventListener('click', (e) => {
+  const drawer  = document.getElementById('prog-drawer');
+  const toggle  = document.getElementById('prog-toggle');
+  if(drawerOpen && !drawer.contains(e.target) && !toggle.contains(e.target)){
+    closeDrawer();
+  }
+});
+
+// Patch showSection to auto-mark visited
+const _origShowSection = showSection;
+showSection = function(id, btn){
+  _origShowSection(id, btn);
+  markVisited(id);
+};
+
+// Initialise on load
+(function init(){
+  buildList();
+  updateNavBadges();
+  // Mark welcome as visited on first load
+  markVisited('sec-welcome');
+})();
+</script>
+</body>
+</html>
