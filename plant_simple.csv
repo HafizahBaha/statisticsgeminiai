@@ -1,0 +1,61 @@
+Plant_ID,Treatment,Plant_Height_cm,Leaf_Number,Fresh_Weight_g,Germination
+P01,Low Fertilizer,19.3,7,9.92,Germinated
+P02,Low Fertilizer,25.2,6,14.53,Germinated
+P03,High Fertilizer,31.0,9,12.97,Germinated
+P04,Control,17.5,8,10.34,Not Germinated
+P05,Control,13.2,4,5.73,Not Germinated
+P06,High Fertilizer,26.0,11,9.09,Germinated
+P07,Low Fertilizer,20.8,8,8.68,Germinated
+P08,Control,15.5,8,7.51,Not Germinated
+P09,Low Fertilizer,29.9,10,12.51,Germinated
+P10,Low Fertilizer,24.2,8,12.07,Germinated
+P11,Low Fertilizer,20.9,5,9.68,Not Germinated
+P12,High Fertilizer,32.0,12,12.06,Germinated
+P13,Control,22.3,4,11.73,Germinated
+P14,Control,15.6,6,12.49,Germinated
+P15,Low Fertilizer,27.6,10,11.8,Not Germinated
+P16,Control,17.2,10,10.7,Not Germinated
+P17,Low Fertilizer,26.8,5,11.55,Germinated
+P18,Control,20.2,6,10.8,Not Germinated
+P19,Control,19.6,7,10.03,Germinated
+P20,Low Fertilizer,24.0,8,8.17,Not Germinated
+P21,High Fertilizer,31.1,12,13.31,Germinated
+P22,Low Fertilizer,21.6,10,8.89,Not Germinated
+P23,High Fertilizer,32.7,8,12.98,Germinated
+P24,High Fertilizer,30.4,10,15.33,Not Germinated
+P25,Low Fertilizer,23.6,9,11.5,Germinated
+P26,High Fertilizer,27.2,10,11.34,Germinated
+P27,High Fertilizer,33.2,12,13.97,Not Germinated
+P28,Low Fertilizer,27.1,7,15.64,Not Germinated
+P29,High Fertilizer,30.3,7,16.51,Germinated
+P30,Control,21.1,5,7.53,Germinated
+P31,Low Fertilizer,22.9,10,10.27,Germinated
+P32,Control,21.2,6,13.22,Not Germinated
+P33,High Fertilizer,30.1,11,14.17,Not Germinated
+P34,Low Fertilizer,29.0,9,15.69,Not Germinated
+P35,Control,21.3,3,9.25,Germinated
+P36,High Fertilizer,28.8,10,9.5,Not Germinated
+P37,Control,20.8,6,9.13,Germinated
+P38,Control,18.1,5,8.05,Not Germinated
+P39,Control,15.5,6,7.47,Germinated
+P40,Control,17.7,7,8.03,Germinated
+P41,High Fertilizer,30.0,10,16.17,Germinated
+P42,Low Fertilizer,27.6,7,10.54,Not Germinated
+P43,High Fertilizer,30.7,9,11.3,Germinated
+P44,High Fertilizer,29.4,10,14.76,Not Germinated
+P45,Low Fertilizer,21.8,7,10.79,Germinated
+P46,High Fertilizer,28.0,12,12.02,Germinated
+P47,High Fertilizer,26.5,10,10.75,Not Germinated
+P48,High Fertilizer,26.1,12,10.08,Germinated
+P49,Control,16.4,3,10.55,Germinated
+P50,High Fertilizer,28.7,13,13.61,Germinated
+P51,Control,20.8,4,12.48,Not Germinated
+P52,Low Fertilizer,23.2,9,10.69,Germinated
+P53,Low Fertilizer,25.5,10,11.7,Germinated
+P54,Low Fertilizer,27.0,7,11.0,Germinated
+P55,Control,9.6,7,7.61,Germinated
+P56,Control,16.8,5,9.69,Germinated
+P57,High Fertilizer,31.7,8,12.52,Germinated
+P58,Low Fertilizer,23.9,8,12.22,Germinated
+P59,Control,18.2,6,6.19,Germinated
+P60,High Fertilizer,34.1,13,14.61,Germinated
